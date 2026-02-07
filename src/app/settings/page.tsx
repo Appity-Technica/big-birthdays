@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 import { getNotificationSettings, saveNotificationSettings } from '@/lib/db';
-import { requestNotificationPermission } from '@/lib/fcm';
 import { NotificationTiming, NotificationSettings } from '@/types';
 
 const TIMING_OPTIONS: { value: NotificationTiming; label: string }[] = [
@@ -53,7 +52,8 @@ export default function SettingsPage() {
 
   async function handleToggleEnabled() {
     if (!enabled) {
-      // Turning on — request permission
+      // Turning on — lazy-load FCM and request permission
+      const { requestNotificationPermission } = await import('@/lib/fcm');
       const token = await requestNotificationPermission();
       if (!token) {
         setPermissionState(typeof Notification !== 'undefined' ? Notification.permission : 'unsupported');
