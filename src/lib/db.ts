@@ -6,12 +6,13 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
+  setDoc,
   query,
   orderBy,
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Person } from '@/types';
+import { Person, NotificationSettings } from '@/types';
 import { generateId } from './utils';
 
 function peopleCollection(userId: string) {
@@ -70,6 +71,22 @@ export async function updatePersonFirestore(
 export async function deletePersonFirestore(userId: string, personId: string): Promise<void> {
   const docRef = doc(db, 'users', userId, 'people', personId);
   await deleteDoc(docRef);
+}
+
+// --- Notification Settings ---
+
+function notificationSettingsDoc(userId: string) {
+  return doc(db, 'users', userId, 'settings', 'notifications');
+}
+
+export async function getNotificationSettings(userId: string): Promise<NotificationSettings | null> {
+  const snapshot = await getDoc(notificationSettingsDoc(userId));
+  if (!snapshot.exists()) return null;
+  return snapshot.data() as NotificationSettings;
+}
+
+export async function saveNotificationSettings(userId: string, settings: NotificationSettings): Promise<void> {
+  await setDoc(notificationSettingsDoc(userId), stripUndefined(settings as unknown as Record<string, unknown>));
 }
 
 /**

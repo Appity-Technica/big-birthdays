@@ -50,10 +50,14 @@ export default function NewPersonPage() {
   const [partyDate, setPartyDate] = useState('');
   const [partyInvited, setPartyInvited] = useState('');
   const [partyNotes, setPartyNotes] = useState('');
-  const [pastGifts, setPastGifts] = useState<{ year: string; description: string; url: string }[]>([]);
+  const [pastGifts, setPastGifts] = useState<{ year: string; description: string; url: string; rating: number }[]>([]);
 
   function updateGift(index: number, field: 'year' | 'description' | 'url', value: string) {
     setPastGifts((prev) => prev.map((g, i) => i === index ? { ...g, [field]: value } : g));
+  }
+
+  function setGiftRating(index: number, rating: number) {
+    setPastGifts((prev) => prev.map((g, i) => i === index ? { ...g, rating: g.rating === rating ? 0 : rating } : g));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -88,7 +92,7 @@ export default function NewPersonPage() {
       parties,
       pastGifts: pastGifts
         .filter((g) => g.description.trim() && parseInt(g.year))
-        .map((g) => ({ year: parseInt(g.year), description: g.description.trim(), url: g.url.trim() || undefined })) || undefined,
+        .map((g) => ({ year: parseInt(g.year), description: g.description.trim(), url: g.url.trim() || undefined, rating: g.rating || undefined })) || undefined,
     });
 
     router.push('/people');
@@ -423,12 +427,30 @@ export default function NewPersonPage() {
                   className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-bold text-foreground mb-1">How well received?</label>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setGiftRating(i, star)}
+                      className="text-2xl transition-transform hover:scale-110"
+                    >
+                      {star <= gift.rating ? '★' : '☆'}
+                    </button>
+                  ))}
+                  {gift.rating > 0 && (
+                    <span className="ml-2 text-xs font-bold text-foreground/40 self-center">{gift.rating}/5</span>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
 
           <button
             type="button"
-            onClick={() => setPastGifts((prev) => [...prev, { year: new Date().getFullYear().toString(), description: '', url: '' }])}
+            onClick={() => setPastGifts((prev) => [...prev, { year: new Date().getFullYear().toString(), description: '', url: '', rating: 0 }])}
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border-2 border-dashed border-pink/30 text-xs font-bold text-pink hover:bg-pink/5 transition-colors"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

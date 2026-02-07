@@ -11,6 +11,7 @@ export interface PastGift {
   year: number;
   description: string;
   url?: string;
+  rating?: number; // 1-5 stars, how well received
 }
 
 export interface Party {
@@ -18,6 +19,14 @@ export interface Party {
   date?: string;
   invitedNames?: string[];
   notes?: string;
+}
+
+export type NotificationTiming = 'on-the-day' | '1-day' | '3-days' | '1-week' | '2-weeks';
+
+export interface NotificationSettings {
+  enabled: boolean;
+  defaultTimings: NotificationTiming[];
+  fcmToken?: string;
 }
 
 export interface Person {
@@ -35,6 +44,7 @@ export interface Person {
   pastGifts?: PastGift[];
   parties?: Party[];
   socialLinks?: SocialLink[];
+  notificationTimings?: NotificationTiming[]; // per-person override; absent = use defaults
   createdAt: string;
   updatedAt: string;
 }

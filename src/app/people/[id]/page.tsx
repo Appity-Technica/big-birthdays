@@ -194,6 +194,11 @@ export default function PersonDetailPage() {
                   <span className="text-sm text-foreground flex-1 min-w-0 truncate">
                     {gift.description}
                   </span>
+                  {gift.rating && gift.rating > 0 && (
+                    <span className="shrink-0 text-sm tracking-tight" title={`${gift.rating}/5`}>
+                      {Array.from({ length: 5 }, (_, i) => i < gift.rating! ? '★' : '☆').join('')}
+                    </span>
+                  )}
                   {gift.url && (
                     <a
                       href={gift.url}

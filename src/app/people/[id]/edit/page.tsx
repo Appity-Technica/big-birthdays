@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { usePeople } from '@/hooks/usePeople';
-import { Relationship, KnownFrom, Party, PastGift } from '@/types';
+import { Relationship, KnownFrom, Party, PastGift, NotificationTiming } from '@/types';
 import { parseDob, buildDob } from '@/lib/utils';
 
 const MONTHS = [
@@ -66,20 +66,21 @@ interface PastGiftForm {
   year: string;
   description: string;
   url: string;
+  rating: number;
 }
 
 function emptyGiftForm(): PastGiftForm {
-  return { year: new Date().getFullYear().toString(), description: '', url: '' };
+  return { year: new Date().getFullYear().toString(), description: '', url: '', rating: 0 };
 }
 
 function giftToForm(g: PastGift): PastGiftForm {
-  return { year: g.year.toString(), description: g.description, url: g.url || '' };
+  return { year: g.year.toString(), description: g.description, url: g.url || '', rating: g.rating || 0 };
 }
 
 function formToGift(f: PastGiftForm): PastGift | null {
   const year = parseInt(f.year);
   if (!year || !f.description.trim()) return null;
-  return { year, description: f.description.trim(), url: f.url.trim() || undefined };
+  return { year, description: f.description.trim(), url: f.url.trim() || undefined, rating: f.rating || undefined };
 }
 
 export default function EditPersonPage() {
@@ -102,6 +103,8 @@ export default function EditPersonPage() {
   const [giftIdeas, setGiftIdeas] = useState('');
   const [parties, setParties] = useState<PartyForm[]>([]);
   const [pastGifts, setPastGifts] = useState<PastGiftForm[]>([]);
+  const [useCustomNotifications, setUseCustomNotifications] = useState(false);
+  const [notificationTimings, setNotificationTimings] = useState<NotificationTiming[]>([]);
   const [saving, setSaving] = useState(false);
   const [initialised, setInitialised] = useState(false);
 
@@ -122,6 +125,10 @@ export default function EditPersonPage() {
       setGiftIdeas(person.giftIdeas?.join(', ') || '');
       setParties(person.parties?.map(partyToForm) || []);
       setPastGifts(person.pastGifts?.map(giftToForm) || []);
+      if (person.notificationTimings) {
+        setUseCustomNotifications(true);
+        setNotificationTimings(person.notificationTimings);
+      }
       setInitialised(true);
     }
   }, [person, initialised]);
@@ -157,8 +164,12 @@ export default function EditPersonPage() {
     setParties((prev) => [...prev, emptyPartyForm()]);
   }
 
-  function updateGift(index: number, field: keyof PastGiftForm, value: string) {
+  function updateGift(index: number, field: 'year' | 'description' | 'url', value: string) {
     setPastGifts((prev) => prev.map((g, i) => i === index ? { ...g, [field]: value } : g));
+  }
+
+  function setGiftRating(index: number, rating: number) {
+    setPastGifts((prev) => prev.map((g, i) => i === index ? { ...g, rating: g.rating === rating ? 0 : rating } : g));
   }
 
   function removeGift(index: number) {
@@ -196,6 +207,7 @@ export default function EditPersonPage() {
       giftIdeas: giftIdeas.trim() ? giftIdeas.split(',').map((s) => s.trim()).filter(Boolean) : undefined,
       parties: parsedParties.length > 0 ? parsedParties : undefined,
       pastGifts: parsedGifts.length > 0 ? parsedGifts : undefined,
+      notificationTimings: useCustomNotifications && notificationTimings.length > 0 ? notificationTimings : undefined,
     });
 
     router.push(`/people/${personId}`);
@@ -511,6 +523,24 @@ export default function EditPersonPage() {
                   className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-bold text-foreground mb-1">How well received?</label>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setGiftRating(i, star)}
+                      className="text-2xl transition-transform hover:scale-110"
+                    >
+                      {star <= gift.rating ? '★' : '☆'}
+                    </button>
+                  ))}
+                  {gift.rating > 0 && (
+                    <span className="ml-2 text-xs font-bold text-foreground/40 self-center">{gift.rating}/5</span>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
 
@@ -524,6 +554,50 @@ export default function EditPersonPage() {
             </svg>
             Add past gift
           </button>
+        </fieldset>
+
+        {/* Notification Override */}
+        <fieldset className="space-y-4 p-5 rounded-2xl bg-yellow-light/20 border border-yellow-light">
+          <legend className="text-sm font-bold text-orange px-1">Notifications</legend>
+
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={useCustomNotifications}
+              onChange={(e) => setUseCustomNotifications(e.target.checked)}
+              className="w-5 h-5 rounded border-2 border-lavender text-orange focus:ring-orange/20 accent-orange"
+            />
+            <span className="text-sm font-bold text-foreground">Custom notification timing for this person</span>
+          </label>
+
+          {useCustomNotifications && (
+            <div className="space-y-2 pl-8">
+              {([
+                { value: 'on-the-day' as NotificationTiming, label: 'On the day' },
+                { value: '1-day' as NotificationTiming, label: '1 day before' },
+                { value: '3-days' as NotificationTiming, label: '3 days before' },
+                { value: '1-week' as NotificationTiming, label: '1 week before' },
+                { value: '2-weeks' as NotificationTiming, label: '2 weeks before' },
+              ]).map((opt) => (
+                <label key={opt.value} className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={notificationTimings.includes(opt.value)}
+                    onChange={() =>
+                      setNotificationTimings((prev) =>
+                        prev.includes(opt.value) ? prev.filter((t) => t !== opt.value) : [...prev, opt.value]
+                      )
+                    }
+                    className="w-5 h-5 rounded border-2 border-lavender text-orange focus:ring-orange/20 accent-orange"
+                  />
+                  <span className="text-sm font-semibold text-foreground">{opt.label}</span>
+                </label>
+              ))}
+              <p className="text-xs text-foreground/40 mt-2">
+                Uncheck &ldquo;Custom&rdquo; to use your default settings.
+              </p>
+            </div>
+          )}
         </fieldset>
 
         {/* Submit */}
