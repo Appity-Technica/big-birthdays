@@ -262,18 +262,20 @@ export default function Home() {
         <div className="absolute top-24 right-[35%] w-3.5 h-3.5 bg-coral rotate-45 opacity-25" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="animate-fade-up">
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-purple leading-tight">
-              Celebrate Every
-              <br />
-              <span className="bg-gradient-to-r from-pink via-coral to-orange bg-clip-text text-transparent">
-                Birthday
-              </span>
-            </h1>
-            <p className="mt-4 text-lg sm:text-xl text-foreground/60 max-w-lg leading-relaxed">
-              Track your loved ones&apos; birthdays, never miss a milestone,
-              and make every celebration unforgettable.
-            </p>
+          <div className="animate-fade-up flex flex-col sm:flex-row items-center sm:items-start gap-6">
+            <img src="/logo.png" alt="Tiaras & Trains" className="w-28 h-28 sm:w-36 sm:h-36 drop-shadow-lg" />
+            <div>
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-purple leading-tight text-center sm:text-left">
+                Tiaras &amp;{' '}
+                <span className="bg-gradient-to-r from-pink via-coral to-orange bg-clip-text text-transparent">
+                  Trains
+                </span>
+              </h1>
+              <p className="mt-4 text-lg sm:text-xl text-foreground/60 max-w-lg leading-relaxed text-center sm:text-left">
+                Track your loved ones&apos; birthdays, never miss a milestone,
+                and make every celebration unforgettable.
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-3 mt-8 animate-fade-up" style={{ animationDelay: '150ms' }}>

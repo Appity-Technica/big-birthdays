@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from './AuthProvider';
@@ -19,8 +20,9 @@ export function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-lavender">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="font-display text-2xl font-bold text-purple">
-            Big Birthdays
+          <Link href="/" className="flex items-center gap-2">
+            <Image src="/logo.png" alt="Tiaras & Trains" width={40} height={40} className="w-10 h-10" />
+            <span className="font-display text-xl font-bold text-purple hidden sm:inline">Tiaras & Trains</span>
           </Link>
           <div className="flex items-center gap-1">
             {links.map((link) => (

@@ -365,7 +365,7 @@ export default function ImportContactsPage() {
             {importedCount} {importedCount === 1 ? 'birthday' : 'birthdays'} imported!
           </h3>
           <p className="text-foreground/50 mb-8">
-            Your contacts have been added to Big Birthdays.
+            Your contacts have been added to Tiaras &amp; Trains.
           </p>
           <Link
             href="/people"

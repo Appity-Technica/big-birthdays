@@ -15,7 +15,7 @@ const baloo = Baloo_2({
 });
 
 export const metadata: Metadata = {
-  title: "Big Birthdays",
+  title: "Tiaras & Trains — Birthday Tracker",
   description: "Track birthdays and celebrate every milestone with joy",
 };
 
