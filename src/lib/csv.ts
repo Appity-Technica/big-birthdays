@@ -77,28 +77,43 @@ function parseCSVRow(line: string): string[] {
 }
 
 /**
- * Normalise a date string into YYYY-MM-DD.
- * Supports: YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY, DD.MM.YYYY,
- * and natural formats like "1 Jan 2000", "January 1, 2000".
+ * Normalise a date string into YYYY-MM-DD (or 0000-MM-DD when year is unknown).
+ * Supports: YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY, DD.MM.YYYY, DD/MM, DD-MM,
+ * and natural formats like "1 Jan 2000", "January 1", "15 March".
  */
 function normaliseDate(raw: string): string | null {
   // Already ISO: YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
 
-  // DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY
+  // DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY (with year)
   const dmy = raw.match(/^(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{4})$/);
   if (dmy) {
     const [, d, m, y] = dmy;
     return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
   }
 
-  // Try JS Date parse as fallback (handles "Jan 1, 2000" etc.)
+  // DD/MM or DD-MM or DD.MM (no year)
+  const dmOnly = raw.match(/^(\d{1,2})[/\-.](\d{1,2})$/);
+  if (dmOnly) {
+    const [, d, m] = dmOnly;
+    return `0000-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+  }
+
+  // Try JS Date parse as fallback (handles "Jan 1, 2000", "15 March 1990" etc.)
   const parsed = new Date(raw);
   if (!isNaN(parsed.getTime()) && parsed.getFullYear() > 1900) {
     const y = parsed.getFullYear();
     const m = String(parsed.getMonth() + 1).padStart(2, '0');
     const d = String(parsed.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
+  }
+
+  // Try without year: "15 March", "March 15", "1 Jan"
+  const withFakeYear = new Date(`${raw} 2000`);
+  if (!isNaN(withFakeYear.getTime())) {
+    const m = String(withFakeYear.getMonth() + 1).padStart(2, '0');
+    const d = String(withFakeYear.getDate()).padStart(2, '0');
+    return `0000-${m}-${d}`;
   }
 
   return null;

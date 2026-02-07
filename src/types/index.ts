@@ -10,6 +10,7 @@ export interface SocialLink {
 export interface PastGift {
   year: number;
   description: string;
+  url?: string;
 }
 
 export interface Party {

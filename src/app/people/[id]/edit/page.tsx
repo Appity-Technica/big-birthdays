@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { usePeople } from '@/hooks/usePeople';
-import { Relationship, KnownFrom, Party } from '@/types';
+import { Relationship, KnownFrom, Party, PastGift } from '@/types';
 import { parseDob, buildDob } from '@/lib/utils';
 
 const MONTHS = [
@@ -62,6 +62,26 @@ function formToParty(f: PartyForm): Party | null {
   };
 }
 
+interface PastGiftForm {
+  year: string;
+  description: string;
+  url: string;
+}
+
+function emptyGiftForm(): PastGiftForm {
+  return { year: new Date().getFullYear().toString(), description: '', url: '' };
+}
+
+function giftToForm(g: PastGift): PastGiftForm {
+  return { year: g.year.toString(), description: g.description, url: g.url || '' };
+}
+
+function formToGift(f: PastGiftForm): PastGift | null {
+  const year = parseInt(f.year);
+  if (!year || !f.description.trim()) return null;
+  return { year, description: f.description.trim(), url: f.url.trim() || undefined };
+}
+
 export default function EditPersonPage() {
   const params = useParams();
   const router = useRouter();
@@ -81,6 +101,7 @@ export default function EditPersonPage() {
   const [interests, setInterests] = useState('');
   const [giftIdeas, setGiftIdeas] = useState('');
   const [parties, setParties] = useState<PartyForm[]>([]);
+  const [pastGifts, setPastGifts] = useState<PastGiftForm[]>([]);
   const [saving, setSaving] = useState(false);
   const [initialised, setInitialised] = useState(false);
 
@@ -100,6 +121,7 @@ export default function EditPersonPage() {
       setInterests(person.interests?.join(', ') || '');
       setGiftIdeas(person.giftIdeas?.join(', ') || '');
       setParties(person.parties?.map(partyToForm) || []);
+      setPastGifts(person.pastGifts?.map(giftToForm) || []);
       setInitialised(true);
     }
   }, [person, initialised]);
@@ -135,6 +157,18 @@ export default function EditPersonPage() {
     setParties((prev) => [...prev, emptyPartyForm()]);
   }
 
+  function updateGift(index: number, field: keyof PastGiftForm, value: string) {
+    setPastGifts((prev) => prev.map((g, i) => i === index ? { ...g, [field]: value } : g));
+  }
+
+  function removeGift(index: number) {
+    setPastGifts((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function addGift() {
+    setPastGifts((prev) => [...prev, emptyGiftForm()]);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !dobDay || !dobMonth) return;
@@ -148,6 +182,7 @@ export default function EditPersonPage() {
     );
 
     const parsedParties = parties.map(formToParty).filter((p): p is Party => p !== null);
+    const parsedGifts = pastGifts.map(formToGift).filter((g): g is PastGift => g !== null);
 
     await updatePerson(personId, {
       name: name.trim(),
@@ -160,6 +195,7 @@ export default function EditPersonPage() {
       interests: interests.trim() ? interests.split(',').map((s) => s.trim()).filter(Boolean) : undefined,
       giftIdeas: giftIdeas.trim() ? giftIdeas.split(',').map((s) => s.trim()).filter(Boolean) : undefined,
       parties: parsedParties.length > 0 ? parsedParties : undefined,
+      pastGifts: parsedGifts.length > 0 ? parsedGifts : undefined,
     });
 
     router.push(`/people/${personId}`);
@@ -425,6 +461,70 @@ export default function EditPersonPage() {
             className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
           />
         </div>
+
+        {/* Past Gifts */}
+        <fieldset className="space-y-4 p-5 rounded-2xl bg-pink/5 border border-pink/20">
+          <legend className="text-sm font-bold text-pink px-1">Past Gifts</legend>
+
+          {pastGifts.map((gift, i) => (
+            <div key={i} className="space-y-3 p-4 rounded-xl bg-white/70 border border-pink/10">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-bold text-pink">Gift {i + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => removeGift(i)}
+                  className="text-xs font-bold text-coral hover:text-coral/80 transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Year</label>
+                  <input
+                    type="number"
+                    value={gift.year}
+                    onChange={(e) => updateGift(i, 'year', e.target.value)}
+                    min="2000"
+                    max={new Date().getFullYear()}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-bold text-foreground mb-1">What was it?</label>
+                  <input
+                    type="text"
+                    value={gift.description}
+                    onChange={(e) => updateGift(i, 'description', e.target.value)}
+                    placeholder="e.g. LEGO City set"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-foreground mb-1">Link (optional)</label>
+                <input
+                  type="url"
+                  value={gift.url}
+                  onChange={(e) => updateGift(i, 'url', e.target.value)}
+                  placeholder="https://..."
+                  className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
+                />
+              </div>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={addGift}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border-2 border-dashed border-pink/30 text-xs font-bold text-pink hover:bg-pink/5 transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Add past gift
+          </button>
+        </fieldset>
 
         {/* Submit */}
         <div className="flex items-center gap-3 pt-2">

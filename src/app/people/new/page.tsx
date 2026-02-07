@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { usePeople } from '@/hooks/usePeople';
-import { Relationship, KnownFrom } from '@/types';
+import { Relationship, KnownFrom, PastGift } from '@/types';
 import { buildDob } from '@/lib/utils';
 
 const MONTHS = [
@@ -50,6 +50,11 @@ export default function NewPersonPage() {
   const [partyDate, setPartyDate] = useState('');
   const [partyInvited, setPartyInvited] = useState('');
   const [partyNotes, setPartyNotes] = useState('');
+  const [pastGifts, setPastGifts] = useState<{ year: string; description: string; url: string }[]>([]);
+
+  function updateGift(index: number, field: 'year' | 'description' | 'url', value: string) {
+    setPastGifts((prev) => prev.map((g, i) => i === index ? { ...g, [field]: value } : g));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -81,6 +86,9 @@ export default function NewPersonPage() {
       interests: interests.trim() ? interests.split(',').map((s) => s.trim()).filter(Boolean) : undefined,
       giftIdeas: giftIdeas.trim() ? giftIdeas.split(',').map((s) => s.trim()).filter(Boolean) : undefined,
       parties,
+      pastGifts: pastGifts
+        .filter((g) => g.description.trim() && parseInt(g.year))
+        .map((g) => ({ year: parseInt(g.year), description: g.description.trim(), url: g.url.trim() || undefined })) || undefined,
     });
 
     router.push('/people');
@@ -365,6 +373,70 @@ export default function NewPersonPage() {
             className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
           />
         </div>
+
+        {/* Past Gifts */}
+        <fieldset className="space-y-4 p-5 rounded-2xl bg-pink/5 border border-pink/20">
+          <legend className="text-sm font-bold text-pink px-1">Past Gifts</legend>
+
+          {pastGifts.map((gift, i) => (
+            <div key={i} className="space-y-3 p-4 rounded-xl bg-white/70 border border-pink/10">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-bold text-pink">Gift {i + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => setPastGifts((prev) => prev.filter((_, j) => j !== i))}
+                  className="text-xs font-bold text-coral hover:text-coral/80 transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-sm font-bold text-foreground mb-1">Year</label>
+                  <input
+                    type="number"
+                    value={gift.year}
+                    onChange={(e) => updateGift(i, 'year', e.target.value)}
+                    min="2000"
+                    max={new Date().getFullYear()}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-bold text-foreground mb-1">What was it?</label>
+                  <input
+                    type="text"
+                    value={gift.description}
+                    onChange={(e) => updateGift(i, 'description', e.target.value)}
+                    placeholder="e.g. LEGO City set"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-foreground mb-1">Link (optional)</label>
+                <input
+                  type="url"
+                  value={gift.url}
+                  onChange={(e) => updateGift(i, 'url', e.target.value)}
+                  placeholder="https://..."
+                  className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
+                />
+              </div>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={() => setPastGifts((prev) => [...prev, { year: new Date().getFullYear().toString(), description: '', url: '' }])}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border-2 border-dashed border-pink/30 text-xs font-bold text-pink hover:bg-pink/5 transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Add past gift
+          </button>
+        </fieldset>
 
         {/* Submit */}
         <div className="flex items-center gap-3 pt-2">
