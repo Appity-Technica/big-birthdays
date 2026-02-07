@@ -19,7 +19,7 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-lavender">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-36">
+        <div className="flex items-center justify-between py-2">
           <Link href="/" className="flex items-center">
             <Image src="/logo.png" alt="Tiaras & Trains" width={256} height={256} className="w-32 h-32 rounded-3xl border-3 border-purple" />
           </Link>
