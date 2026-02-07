@@ -1,0 +1,186 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { getAllPeople, deletePerson } from '@/lib/localStorage';
+import { Person, Relationship } from '@/types';
+import { daysUntilBirthday, getUpcomingAge, getCurrentAge, formatDate } from '@/lib/utils';
+
+const ACCENT_COLORS = [
+  'bg-pink', 'bg-teal', 'bg-orange', 'bg-coral', 'bg-purple-light',
+];
+
+const RELATIONSHIP_STYLES: Record<Relationship, { bg: string; text: string; label: string }> = {
+  family: { bg: 'bg-pink/15', text: 'text-pink', label: 'Family' },
+  friend: { bg: 'bg-teal/15', text: 'text-teal', label: 'Friend' },
+  colleague: { bg: 'bg-orange/15', text: 'text-orange', label: 'Colleague' },
+  other: { bg: 'bg-purple-light/15', text: 'text-purple-light', label: 'Other' },
+};
+
+function getInitials(name: string): string {
+  return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+}
+
+export default function PeoplePage() {
+  const [people, setPeople] = useState<Person[]>([]);
+  const [mounted, setMounted] = useState(false);
+  const [filter, setFilter] = useState<Relationship | 'all'>('all');
+  const [sortBy, setSortBy] = useState<'name' | 'upcoming'>('upcoming');
+
+  useEffect(() => {
+    setPeople(getAllPeople());
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-10 h-10 rounded-full border-4 border-lavender border-t-purple animate-spin" />
+      </div>
+    );
+  }
+
+  const filtered = people.filter((p) => filter === 'all' || p.relationship === filter);
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'name') return a.name.localeCompare(b.name);
+    return daysUntilBirthday(a.dateOfBirth) - daysUntilBirthday(b.dateOfBirth);
+  });
+
+  function handleDelete(id: string, name: string) {
+    if (confirm(`Remove ${name}? This cannot be undone.`)) {
+      deletePerson(id);
+      setPeople(getAllPeople());
+    }
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-purple">People</h1>
+          <p className="text-foreground/50 mt-1">
+            {people.length} {people.length === 1 ? 'person' : 'people'} tracked
+          </p>
+        </div>
+        <Link
+          href="/people/new"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-purple text-white rounded-full font-bold text-sm hover:bg-purple-dark transition-all shadow-lg shadow-purple/25 self-start"
+        >
+          <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Add Person
+        </Link>
+      </div>
+
+      {/* Filters & Sort */}
+      {people.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <div className="flex items-center gap-1 bg-lavender/40 rounded-full p-1">
+            {(['all', 'family', 'friend', 'colleague', 'other'] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                  filter === f
+                    ? 'bg-purple text-white'
+                    : 'text-purple-dark hover:bg-lavender'
+                }`}
+              >
+                {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-1 bg-lavender/40 rounded-full p-1 ml-auto">
+            <button
+              onClick={() => setSortBy('upcoming')}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                sortBy === 'upcoming' ? 'bg-purple text-white' : 'text-purple-dark hover:bg-lavender'
+              }`}
+            >
+              Upcoming
+            </button>
+            <button
+              onClick={() => setSortBy('name')}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                sortBy === 'name' ? 'bg-purple text-white' : 'text-purple-dark hover:bg-lavender'
+              }`}
+            >
+              A-Z
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* People list */}
+      {sorted.length === 0 ? (
+        <div className="text-center py-16">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-lavender flex items-center justify-center">
+            <span className="text-3xl">🎉</span>
+          </div>
+          <h3 className="font-display text-xl font-bold text-purple mb-2">
+            {people.length === 0 ? 'No people yet' : 'No matches'}
+          </h3>
+          <p className="text-foreground/50">
+            {people.length === 0
+              ? 'Add someone to start tracking birthdays!'
+              : 'Try a different filter.'}
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-3">
+          {sorted.map((person, i) => {
+            const days = daysUntilBirthday(person.dateOfBirth);
+            const age = getCurrentAge(person.dateOfBirth);
+            const upcomingAge = getUpcomingAge(person.dateOfBirth);
+            const initials = getInitials(person.name);
+            const accent = ACCENT_COLORS[i % ACCENT_COLORS.length];
+            const relStyle = RELATIONSHIP_STYLES[person.relationship];
+
+            return (
+              <div
+                key={person.id}
+                className="group flex items-center gap-4 p-4 rounded-2xl bg-white border-2 border-lavender hover:border-purple/30 transition-all hover:shadow-lg hover:shadow-purple/5"
+              >
+                <Link href={`/people/${person.id}`} className="flex items-center gap-4 flex-1 min-w-0">
+                  <div className={`w-12 h-12 rounded-xl ${accent} text-white flex items-center justify-center text-base font-display font-bold shrink-0`}>
+                    {initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-display text-lg font-bold text-foreground truncate">
+                      {person.name}
+                    </h3>
+                    <p className="text-sm text-foreground/50">
+                      Age {age} &middot; {formatDate(person.dateOfBirth)}
+                    </p>
+                  </div>
+                </Link>
+                <div className="hidden sm:flex items-center gap-2">
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${relStyle.bg} ${relStyle.text}`}>
+                    {relStyle.label}
+                  </span>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-light text-purple-dark text-xs font-bold">
+                    Turning {upcomingAge}
+                  </span>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-purple/8 text-purple text-xs font-bold tabular-nums min-w-[80px] justify-center">
+                    {days === 0 ? 'Today!' : days === 1 ? 'Tomorrow!' : `${days} days`}
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleDelete(person.id, person.name)}
+                  className="opacity-0 group-hover:opacity-100 p-2 rounded-lg hover:bg-coral/10 text-coral transition-all"
+                  title="Delete"
+                >
+                  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                  </svg>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
