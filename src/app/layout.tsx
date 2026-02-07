@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito, Baloo_2 } from "next/font/google";
 import { Navbar } from "@/components/Navbar";
+import { AuthProvider } from "@/components/AuthProvider";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -26,10 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${nunito.variable} ${baloo.variable} font-sans antialiased`}>
-        <Navbar />
-        <main className="min-h-screen pt-16">
-          {children}
-        </main>
+        <AuthProvider>
+          <Navbar />
+          <main className="min-h-screen pt-16">
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );

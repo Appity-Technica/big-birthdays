@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { getAllPeople, deletePerson } from '@/lib/localStorage';
-import { Person, Relationship, KnownFrom } from '@/types';
+import { usePeople } from '@/hooks/usePeople';
+import { Relationship, KnownFrom } from '@/types';
 import { daysUntilBirthday, getUpcomingAge, getCurrentAge, formatDate } from '@/lib/utils';
 
 const ACCENT_COLORS = [
@@ -22,18 +22,12 @@ function getInitials(name: string): string {
 }
 
 export default function PeoplePage() {
-  const [people, setPeople] = useState<Person[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const { people, loading, deletePerson: removePerson } = usePeople();
   const [filter, setFilter] = useState<Relationship | 'all'>('all');
   const [knownFromFilter, setKnownFromFilter] = useState<KnownFrom | 'all'>('all');
   const [sortBy, setSortBy] = useState<'name' | 'upcoming'>('upcoming');
 
-  useEffect(() => {
-    setPeople(getAllPeople());
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-10 h-10 rounded-full border-4 border-lavender border-t-purple animate-spin" />
@@ -51,8 +45,7 @@ export default function PeoplePage() {
 
   function handleDelete(id: string, name: string) {
     if (confirm(`Remove ${name}? This cannot be undone.`)) {
-      deletePerson(id);
-      setPeople(getAllPeople());
+      removePerson(id);
     }
   }
 

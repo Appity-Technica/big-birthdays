@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { addPerson } from '@/lib/localStorage';
+import { usePeople } from '@/hooks/usePeople';
 import { Relationship, KnownFrom } from '@/types';
 
 const RELATIONSHIPS: { value: Relationship; label: string; icon: string }[] = [
@@ -27,6 +27,7 @@ const KNOWN_FROM_OPTIONS: { value: KnownFrom; label: string }[] = [
 
 export default function NewPersonPage() {
   const router = useRouter();
+  const { addPerson } = usePeople();
   const [name, setName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [relationship, setRelationship] = useState<Relationship>('friend');
@@ -42,7 +43,7 @@ export default function NewPersonPage() {
   const [partyInvited, setPartyInvited] = useState('');
   const [partyNotes, setPartyNotes] = useState('');
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !dateOfBirth) return;
 
@@ -55,7 +56,7 @@ export default function NewPersonPage() {
         }]
       : undefined;
 
-    addPerson({
+    await addPerson({
       name: name.trim(),
       dateOfBirth,
       relationship,

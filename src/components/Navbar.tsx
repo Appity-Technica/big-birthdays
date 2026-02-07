@@ -2,9 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from './AuthProvider';
+import { signOut } from '@/lib/auth';
 
 export function Navbar() {
   const pathname = usePathname();
+  const { user, loading } = useAuth();
 
   const links = [
     { href: '/', label: 'Home' },
@@ -33,6 +36,25 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            {!loading && (
+              <>
+                {user ? (
+                  <button
+                    onClick={() => signOut()}
+                    className="ml-2 px-4 py-2 rounded-full text-sm font-semibold text-purple-dark hover:bg-lavender transition-colors"
+                  >
+                    Sign out
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="ml-2 px-4 py-2 rounded-full text-sm font-semibold bg-purple/10 text-purple hover:bg-purple/20 transition-colors"
+                  >
+                    Sign in
+                  </Link>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>

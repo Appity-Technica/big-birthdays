@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getAllPeople } from '@/lib/localStorage';
+import { usePeople } from '@/hooks/usePeople';
 import { Person, Relationship } from '@/types';
 import { daysUntilBirthday, getUpcomingAge, isBirthdayToday, formatDate } from '@/lib/utils';
 
@@ -211,15 +210,9 @@ function EmptyState() {
 }
 
 export default function Home() {
-  const [people, setPeople] = useState<Person[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const { people, loading } = usePeople();
 
-  useEffect(() => {
-    setPeople(getAllPeople());
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-10 h-10 rounded-full border-4 border-lavender border-t-purple animate-spin" />

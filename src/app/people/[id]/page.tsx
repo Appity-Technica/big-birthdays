@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { getPersonById, deletePerson } from '@/lib/localStorage';
-import { Person } from '@/types';
+import { usePeople } from '@/hooks/usePeople';
 import { getCurrentAge, daysUntilBirthday, getUpcomingAge, formatDate } from '@/lib/utils';
 
 const RELATIONSHIP_STYLES = {
@@ -21,17 +19,11 @@ function getInitials(name: string): string {
 export default function PersonDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const [person, setPerson] = useState<Person | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const { getPersonById, deletePerson: removePerson, loading } = usePeople();
 
-  useEffect(() => {
-    const id = params.id as string;
-    const found = getPersonById(id);
-    setPerson(found ?? null);
-    setMounted(true);
-  }, [params.id]);
+  const person = getPersonById(params.id as string);
 
-  if (!mounted) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-10 h-10 rounded-full border-4 border-lavender border-t-purple animate-spin" />
@@ -55,9 +47,9 @@ export default function PersonDetailPage() {
   const upcomingAge = getUpcomingAge(person.dateOfBirth);
   const relStyle = RELATIONSHIP_STYLES[person.relationship];
 
-  function handleDelete() {
+  async function handleDelete() {
     if (confirm(`Remove ${person!.name}? This cannot be undone.`)) {
-      deletePerson(person!.id);
+      await removePerson(person!.id);
       router.push('/people');
     }
   }
