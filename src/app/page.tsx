@@ -1,9 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePeople } from '@/hooks/usePeople';
 import { Person, Relationship } from '@/types';
-import { daysUntilBirthday, getUpcomingAge, isBirthdayToday, formatDate } from '@/lib/utils';
+import { daysUntilBirthday, getUpcomingAge, getCurrentAge, isBirthdayToday, formatDate } from '@/lib/utils';
 
 const ACCENT_COLORS = [
   { bg: 'bg-pink', text: 'text-white' },
@@ -87,51 +88,53 @@ function Confetti() {
   );
 }
 
-function BirthdayTodayCard({ person }: { person: Person }) {
+function BirthdayTodayCard({ person, onClick }: { person: Person; onClick: () => void }) {
   const age = getUpcomingAge(person.dateOfBirth);
   const initials = getInitials(person.name);
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple via-pink to-coral p-1">
-      <div className="relative overflow-hidden rounded-[22px] bg-white p-6 sm:p-8">
-        <Confetti />
-        <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
-          <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow to-orange flex items-center justify-center text-white text-3xl font-display font-bold shadow-lg shadow-yellow/30">
-              {initials}
+    <button onClick={onClick} className="w-full text-left cursor-pointer">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple via-pink to-coral p-1">
+        <div className="relative overflow-hidden rounded-[22px] bg-white p-6 sm:p-8">
+          <Confetti />
+          <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
+            <div className="relative">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow to-orange flex items-center justify-center text-white text-3xl font-display font-bold shadow-lg shadow-yellow/30">
+                {initials}
+              </div>
+              <div className="absolute -top-2 -right-2 w-10 h-10 bg-coral rounded-full flex items-center justify-center text-white text-lg animate-bounce shadow-md">
+                🎂
+              </div>
             </div>
-            <div className="absolute -top-2 -right-2 w-10 h-10 bg-coral rounded-full flex items-center justify-center text-white text-lg animate-bounce shadow-md">
-              🎂
-            </div>
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-bold uppercase tracking-widest text-pink mb-1">
-              Today&apos;s Birthday
-            </p>
-            <h3 className="font-display text-3xl sm:text-4xl font-bold text-purple-dark mb-2">
-              {person.name}
-            </h3>
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-              {age !== null && (
-                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-yellow-light text-purple-dark text-sm font-bold">
-                  Turning {age}
+            <div className="flex-1">
+              <p className="text-sm font-bold uppercase tracking-widest text-pink mb-1">
+                Today&apos;s Birthday
+              </p>
+              <h3 className="font-display text-3xl sm:text-4xl font-bold text-purple-dark mb-2">
+                {person.name}
+              </h3>
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                {age !== null && (
+                  <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-yellow-light text-purple-dark text-sm font-bold">
+                    Turning {age}
+                  </span>
+                )}
+                <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${RELATIONSHIP_STYLES[person.relationship].bg} ${RELATIONSHIP_STYLES[person.relationship].text}`}>
+                  {RELATIONSHIP_STYLES[person.relationship].label}
                 </span>
-              )}
-              <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${RELATIONSHIP_STYLES[person.relationship].bg} ${RELATIONSHIP_STYLES[person.relationship].text}`}>
-                {RELATIONSHIP_STYLES[person.relationship].label}
-              </span>
+              </div>
             </div>
-          </div>
-          <div className="text-6xl sm:text-7xl animate-[wiggle_1s_ease-in-out_infinite]">
-            🎈
+            <div className="text-6xl sm:text-7xl animate-[wiggle_1s_ease-in-out_infinite]">
+              🎈
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 
-function UpcomingCard({ person, index }: { person: Person; index: number }) {
+function UpcomingCard({ person, index, onClick }: { person: Person; index: number; onClick: () => void }) {
   const days = daysUntilBirthday(person.dateOfBirth);
   const age = getUpcomingAge(person.dateOfBirth);
   const initials = getInitials(person.name);
@@ -139,8 +142,9 @@ function UpcomingCard({ person, index }: { person: Person; index: number }) {
   const relStyle = RELATIONSHIP_STYLES[person.relationship];
 
   return (
-    <div
-      className="group relative rounded-2xl bg-white border-2 border-lavender hover:border-purple/30 transition-all duration-300 hover:shadow-xl hover:shadow-purple/8 hover:-translate-y-1"
+    <button
+      onClick={onClick}
+      className="group relative rounded-2xl bg-white border-2 border-lavender hover:border-purple/30 transition-all duration-300 hover:shadow-xl hover:shadow-purple/8 hover:-translate-y-1 w-full text-left cursor-pointer"
       style={{ animationDelay: `${index * 80}ms` }}
     >
       <div className="absolute top-0 right-0 w-20 h-20 opacity-[0.04] pointer-events-none">
@@ -176,6 +180,175 @@ function UpcomingCard({ person, index }: { person: Person; index: number }) {
           <span className="ml-auto inline-flex items-center px-3 py-1 rounded-full bg-purple/8 text-purple text-xs font-bold tabular-nums">
             {days === 0 ? 'Today!' : days === 1 ? 'Tomorrow!' : `in ${days} days`}
           </span>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function PersonSheet({ person, onClose }: { person: Person; onClose: () => void }) {
+  const age = getCurrentAge(person.dateOfBirth);
+  const days = daysUntilBirthday(person.dateOfBirth);
+  const upcomingAge = getUpcomingAge(person.dateOfBirth);
+  const relStyle = RELATIONSHIP_STYLES[person.relationship];
+  const initials = getInitials(person.name);
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-[fade-in_200ms_ease-out]"
+        onClick={onClose}
+      />
+
+      {/* Sheet */}
+      <div className="relative w-full sm:max-w-lg sm:mx-4 max-h-[85vh] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-[slide-up_300ms_ease-out] overflow-hidden flex flex-col">
+        {/* Drag handle (mobile) */}
+        <div className="flex justify-center pt-3 pb-1 sm:hidden">
+          <div className="w-10 h-1 rounded-full bg-foreground/20" />
+        </div>
+
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-foreground/10 hover:bg-foreground/20 flex items-center justify-center transition-colors"
+        >
+          <svg className="w-4 h-4 text-foreground/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        {/* Scrollable content */}
+        <div className="overflow-y-auto px-6 pb-6 pt-2 sm:pt-6">
+          {/* Header */}
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink to-coral text-white flex items-center justify-center text-2xl font-display font-bold shadow-lg shadow-pink/20 shrink-0">
+              {initials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="font-display text-2xl font-bold text-purple truncate">{person.name}</h2>
+              <p className="text-sm text-foreground/50 mt-0.5">
+                {age !== null ? `Age ${age} \u00b7 ` : ''}{formatDate(person.dateOfBirth)}
+              </p>
+            </div>
+          </div>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${relStyle.bg} ${relStyle.text}`}>
+              {relStyle.label}
+            </span>
+            {upcomingAge !== null && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-light text-purple-dark text-xs font-bold">
+                Turning {upcomingAge}
+              </span>
+            )}
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-purple/8 text-purple text-xs font-bold">
+              {days === 0 ? 'Birthday today!' : days === 1 ? 'Birthday tomorrow!' : `${days} days away`}
+            </span>
+          </div>
+
+          {/* Connection */}
+          {(person.connectedThrough || person.knownFrom) && (
+            <div className="p-4 rounded-xl bg-purple/5 border border-purple/15 mb-4">
+              <h3 className="text-xs font-bold text-purple mb-2">Connection</h3>
+              <div className="flex flex-wrap gap-2">
+                {person.connectedThrough && (
+                  <span className="px-3 py-1 rounded-full bg-purple/10 text-purple text-xs font-bold">
+                    Via {person.connectedThrough}
+                  </span>
+                )}
+                {person.knownFrom && (
+                  <span className="px-3 py-1 rounded-full bg-lavender text-purple-dark text-xs font-bold">
+                    {person.knownFrom === 'other' && person.knownFromCustom
+                      ? person.knownFromCustom
+                      : person.knownFrom === 'family-friend'
+                      ? 'Family friend'
+                      : person.knownFrom.charAt(0).toUpperCase() + person.knownFrom.slice(1)}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Notes */}
+          {person.notes && (
+            <div className="p-4 rounded-xl bg-lavender/30 border border-lavender mb-4">
+              <h3 className="text-xs font-bold text-purple mb-1">Notes</h3>
+              <p className="text-sm text-foreground/70 whitespace-pre-wrap">{person.notes}</p>
+            </div>
+          )}
+
+          {/* Interests */}
+          {person.interests && person.interests.length > 0 && (
+            <div className="p-4 rounded-xl bg-mint/30 border border-mint mb-4">
+              <h3 className="text-xs font-bold text-teal mb-2">Interests</h3>
+              <div className="flex flex-wrap gap-1.5">
+                {person.interests.map((interest) => (
+                  <span key={interest} className="px-2.5 py-0.5 rounded-full bg-teal/10 text-teal text-xs font-bold">
+                    {interest}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Gift Ideas */}
+          {person.giftIdeas && person.giftIdeas.length > 0 && (
+            <div className="p-4 rounded-xl bg-yellow-light/30 border border-yellow-light mb-4">
+              <h3 className="text-xs font-bold text-orange mb-2">Gift Ideas</h3>
+              <div className="flex flex-wrap gap-1.5">
+                {person.giftIdeas.map((idea) => (
+                  <span key={idea} className="px-2.5 py-0.5 rounded-full bg-orange/10 text-orange text-xs font-bold">
+                    {idea}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Past Gifts */}
+          {person.pastGifts && person.pastGifts.length > 0 && (
+            <div className="p-4 rounded-xl bg-pink/5 border border-pink/20 mb-4">
+              <h3 className="text-xs font-bold text-pink mb-2">Past Gifts</h3>
+              <div className="space-y-1.5">
+                {person.pastGifts.map((gift, i) => (
+                  <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-white/70">
+                    <span className="px-2 py-0.5 rounded-full bg-pink/10 text-pink text-xs font-bold tabular-nums shrink-0">
+                      {gift.year}
+                    </span>
+                    <span className="text-sm text-foreground flex-1 min-w-0 truncate">
+                      {gift.description}
+                    </span>
+                    {gift.rating && gift.rating > 0 && (
+                      <span className="shrink-0 text-xs tracking-tight" title={`${gift.rating}/5`}>
+                        {Array.from({ length: 5 }, (_, j) => j < gift.rating! ? '★' : '☆').join('')}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3 mt-2">
+            <Link
+              href={`/people/${person.id}`}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-purple text-white text-sm font-bold hover:bg-purple-dark transition-all shadow-lg shadow-purple/25"
+            >
+              View Full Profile
+            </Link>
+            <Link
+              href={`/people/${person.id}/edit`}
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full border-2 border-purple/20 text-purple text-sm font-bold hover:bg-lavender/30 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+              </svg>
+              Edit
+            </Link>
+          </div>
         </div>
       </div>
     </div>
@@ -215,6 +388,7 @@ function EmptyState() {
 
 export default function Home() {
   const { people, loading } = usePeople();
+  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   if (loading) {
     return (
@@ -246,6 +420,14 @@ export default function Home() {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slide-up {
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
+        }
         .animate-fade-up {
           animation: fade-up 0.5s ease-out both;
         }
@@ -263,7 +445,7 @@ export default function Home() {
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-fade-up flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <img src="/logo.png" alt="Tiaras & Trains" className="w-28 h-28 sm:w-36 sm:h-36 drop-shadow-lg" />
+            <img src="/logo.png" alt="Tiaras & Trains" className="w-28 h-28 sm:w-36 sm:h-36 drop-shadow-lg rounded-3xl border-3 border-purple" />
             <div>
               <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-purple leading-tight text-center sm:text-left">
                 Tiaras &amp;{' '}
@@ -347,7 +529,7 @@ export default function Home() {
                 </h2>
                 <div className="grid gap-4">
                   {todayBirthdays.map((person) => (
-                    <BirthdayTodayCard key={person.id} person={person} />
+                    <BirthdayTodayCard key={person.id} person={person} onClick={() => setSelectedPerson(person)} />
                   ))}
                 </div>
               </div>
@@ -370,7 +552,7 @@ export default function Home() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {upcoming.map((person, i) => (
-                    <UpcomingCard key={person.id} person={person} index={i} />
+                    <UpcomingCard key={person.id} person={person} index={i} onClick={() => setSelectedPerson(person)} />
                   ))}
                 </div>
               </div>
@@ -378,6 +560,11 @@ export default function Home() {
           </div>
         )}
       </section>
+
+      {/* Person Modal Sheet */}
+      {selectedPerson && (
+        <PersonSheet person={selectedPerson} onClose={() => setSelectedPerson(null)} />
+      )}
     </>
   );
 }

@@ -29,7 +29,7 @@ export default function RootLayout({
       <body className={`${nunito.variable} ${baloo.variable} font-sans antialiased`}>
         <AuthProvider>
           <Navbar />
-          <main className="min-h-screen pt-16">
+          <main className="min-h-screen pt-20">
             {children}
           </main>
         </AuthProvider>
