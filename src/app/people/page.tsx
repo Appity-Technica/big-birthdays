@@ -193,7 +193,7 @@ export default function PeoplePage() {
                       {person.name}
                     </h3>
                     <p className="text-sm text-foreground/50">
-                      Age {age} &middot; {formatDate(person.dateOfBirth)}
+                      {age !== null ? `Age ${age} \u00b7 ` : ''}{formatDate(person.dateOfBirth)}
                       {(person.connectedThrough || person.knownFrom) && (
                         <span className="text-foreground/40">
                           {' '}&middot;{' '}
@@ -216,13 +216,25 @@ export default function PeoplePage() {
                   <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${relStyle.bg} ${relStyle.text}`}>
                     {relStyle.label}
                   </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-light text-purple-dark text-xs font-bold">
-                    Turning {upcomingAge}
-                  </span>
+                  {upcomingAge !== null && (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-light text-purple-dark text-xs font-bold">
+                      Turning {upcomingAge}
+                    </span>
+                  )}
                   <span className="inline-flex items-center px-3 py-1 rounded-full bg-purple/8 text-purple text-xs font-bold tabular-nums min-w-[80px] justify-center">
                     {days === 0 ? 'Today!' : days === 1 ? 'Tomorrow!' : `${days} days`}
                   </span>
                 </div>
+                <Link
+                  href={`/people/${person.id}/edit`}
+                  className="opacity-0 group-hover:opacity-100 p-2 rounded-lg hover:bg-purple/10 text-purple transition-all"
+                  title="Edit"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                  </svg>
+                </Link>
                 <button
                   onClick={() => handleDelete(person.id, person.name)}
                   className="opacity-0 group-hover:opacity-100 p-2 rounded-lg hover:bg-coral/10 text-coral transition-all"

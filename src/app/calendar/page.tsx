@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePeople } from '@/hooks/usePeople';
 import { Person } from '@/types';
-import { getUpcomingAge } from '@/lib/utils';
+import { getUpcomingAge, parseDob } from '@/lib/utils';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -33,12 +33,11 @@ function getFirstDayOfMonth(year: number, month: number): number {
 function getBirthdaysForMonth(people: Person[], month: number): Map<number, Person[]> {
   const map = new Map<number, Person[]>();
   for (const person of people) {
-    const dob = new Date(person.dateOfBirth);
-    if (dob.getMonth() === month) {
-      const day = dob.getDate();
-      const existing = map.get(day) || [];
+    const dob = parseDob(person.dateOfBirth);
+    if (dob.month === month) {
+      const existing = map.get(dob.day) || [];
       existing.push(person);
-      map.set(day, existing);
+      map.set(dob.day, existing);
     }
   }
   return map;
@@ -177,7 +176,9 @@ export default function CalendarPage() {
                           >
                             <span className="hidden sm:inline">🎂 </span>
                             {person.name}
-                            <span className="hidden sm:inline"> ({getUpcomingAge(person.dateOfBirth)})</span>
+                            {getUpcomingAge(person.dateOfBirth) !== null && (
+                              <span className="hidden sm:inline"> ({getUpcomingAge(person.dateOfBirth)})</span>
+                            )}
                           </Link>
                         ))}
                         {birthdays.length > 2 && (
@@ -225,7 +226,7 @@ export default function CalendarPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-sm truncate">{person.name}</p>
                       <p className="text-xs text-foreground/50">
-                        {MONTH_NAMES[month]} {day} &middot; Turning {upcomingAge}
+                        {MONTH_NAMES[month]} {day}{upcomingAge !== null ? ` \u00b7 Turning ${upcomingAge}` : ''}
                       </p>
                     </div>
                   </Link>

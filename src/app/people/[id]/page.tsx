@@ -73,14 +73,16 @@ export default function PersonDetailPage() {
         </div>
         <div className="text-center sm:text-left flex-1">
           <h1 className="font-display text-3xl font-bold text-purple">{person.name}</h1>
-          <p className="text-foreground/50 mt-1">Age {age} &middot; {formatDate(person.dateOfBirth)}</p>
+          <p className="text-foreground/50 mt-1">{age !== null ? `Age ${age} \u00b7 ` : ''}{formatDate(person.dateOfBirth)}</p>
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-3">
             <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${relStyle.bg} ${relStyle.text}`}>
               {relStyle.label}
             </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-light text-purple-dark text-xs font-bold">
-              Turning {upcomingAge}
-            </span>
+            {upcomingAge !== null && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-light text-purple-dark text-xs font-bold">
+                Turning {upcomingAge}
+              </span>
+            )}
             <span className="inline-flex items-center px-3 py-1 rounded-full bg-purple/8 text-purple text-xs font-bold">
               {days === 0 ? 'Birthday today!' : days === 1 ? 'Birthday tomorrow!' : `${days} days away`}
             </span>
@@ -183,6 +185,15 @@ export default function PersonDetailPage() {
 
       {/* Actions */}
       <div className="flex items-center gap-3 mt-10 pt-6 border-t border-lavender">
+        <Link
+          href={`/people/${person.id}/edit`}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-purple text-white text-sm font-bold hover:bg-purple-dark transition-all shadow-lg shadow-purple/25"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+          </svg>
+          Edit
+        </Link>
         <button
           onClick={handleDelete}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-coral/30 text-coral text-sm font-bold hover:bg-coral/5 transition-colors"

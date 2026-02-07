@@ -112,9 +112,11 @@ function BirthdayTodayCard({ person }: { person: Person }) {
               {person.name}
             </h3>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-              <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-yellow-light text-purple-dark text-sm font-bold">
-                Turning {age}
-              </span>
+              {age !== null && (
+                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-yellow-light text-purple-dark text-sm font-bold">
+                  Turning {age}
+                </span>
+              )}
               <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${RELATIONSHIP_STYLES[person.relationship].bg} ${RELATIONSHIP_STYLES[person.relationship].text}`}>
                 {RELATIONSHIP_STYLES[person.relationship].label}
               </span>
@@ -163,9 +165,11 @@ function UpcomingCard({ person, index }: { person: Person; index: number }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 mt-4">
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-yellow-light text-purple-dark text-xs font-bold">
-            🎂 Turning {age}
-          </span>
+          {age !== null && (
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-yellow-light text-purple-dark text-xs font-bold">
+              🎂 Turning {age}
+            </span>
+          )}
           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${relStyle.bg} ${relStyle.text}`}>
             {relStyle.label}
           </span>
