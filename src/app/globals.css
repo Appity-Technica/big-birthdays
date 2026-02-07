@@ -2,25 +2,43 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a2e;
+  --purple: #7B2D8E;
+  --purple-light: #9B59B6;
+  --purple-dark: #5B1D6E;
+  --pink: #E91E8C;
+  --pink-light: #FF6BB5;
+  --yellow: #F9C74F;
+  --yellow-light: #FDE68A;
+  --teal: #2EC4B6;
+  --orange: #F4845F;
+  --orange-light: #FBBF7D;
+  --coral: #FF6B6B;
+  --lavender: #E8D5F5;
+  --mint: #D0F0E8;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-purple: var(--purple);
+  --color-purple-light: var(--purple-light);
+  --color-purple-dark: var(--purple-dark);
+  --color-pink: var(--pink);
+  --color-pink-light: var(--pink-light);
+  --color-yellow: var(--yellow);
+  --color-yellow-light: var(--yellow-light);
+  --color-teal: var(--teal);
+  --color-orange: var(--orange);
+  --color-orange-light: var(--orange-light);
+  --color-coral: var(--coral);
+  --color-lavender: var(--lavender);
+  --color-mint: var(--mint);
+  --font-sans: var(--font-nunito);
+  --font-display: var(--font-baloo);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
