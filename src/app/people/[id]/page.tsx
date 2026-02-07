@@ -98,6 +98,63 @@ export default function PersonDetailPage() {
 
       {/* Details */}
       <div className="space-y-6">
+        {/* Connection context */}
+        {(person.connectedThrough || person.knownFrom) && (
+          <div className="p-5 rounded-2xl bg-purple/5 border border-purple/15">
+            <h3 className="text-sm font-bold text-purple mb-3">Connection</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              {person.connectedThrough && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple/10 text-purple text-xs font-bold">
+                  Via {person.connectedThrough}
+                </span>
+              )}
+              {person.knownFrom && (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-lavender text-purple-dark text-xs font-bold">
+                  {person.knownFrom === 'other' && person.knownFromCustom
+                    ? person.knownFromCustom
+                    : person.knownFrom === 'family-friend'
+                    ? 'Family friend'
+                    : person.knownFrom.charAt(0).toUpperCase() + person.knownFrom.slice(1)}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Parties */}
+        {person.parties && person.parties.length > 0 && (
+          <div className="p-5 rounded-2xl bg-mint/30 border border-mint">
+            <h3 className="text-sm font-bold text-teal mb-3">Parties</h3>
+            <div className="space-y-3">
+              {person.parties.map((party, i) => (
+                <div key={i} className="p-3 rounded-xl bg-white/70">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-bold text-foreground">{party.year}</span>
+                    {party.date && (
+                      <span className="text-xs text-foreground/50">
+                        {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                      </span>
+                    )}
+                  </div>
+                  {party.invitedNames && party.invitedNames.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      <span className="text-xs text-foreground/50 font-semibold mr-1">Invited:</span>
+                      {party.invitedNames.map((name) => (
+                        <span key={name} className="px-2 py-0.5 rounded-full bg-teal/10 text-teal text-xs font-bold">
+                          {name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {party.notes && (
+                    <p className="text-xs text-foreground/60 mt-1.5">{party.notes}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {person.notes && (
           <div className="p-5 rounded-2xl bg-lavender/30 border border-lavender">
             <h3 className="text-sm font-bold text-purple mb-2">Notes</h3>

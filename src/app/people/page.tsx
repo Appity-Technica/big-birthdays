@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getAllPeople, deletePerson } from '@/lib/localStorage';
-import { Person, Relationship } from '@/types';
+import { Person, Relationship, KnownFrom } from '@/types';
 import { daysUntilBirthday, getUpcomingAge, getCurrentAge, formatDate } from '@/lib/utils';
 
 const ACCENT_COLORS = [
@@ -25,6 +25,7 @@ export default function PeoplePage() {
   const [people, setPeople] = useState<Person[]>([]);
   const [mounted, setMounted] = useState(false);
   const [filter, setFilter] = useState<Relationship | 'all'>('all');
+  const [knownFromFilter, setKnownFromFilter] = useState<KnownFrom | 'all'>('all');
   const [sortBy, setSortBy] = useState<'name' | 'upcoming'>('upcoming');
 
   useEffect(() => {
@@ -40,7 +41,9 @@ export default function PeoplePage() {
     );
   }
 
-  const filtered = people.filter((p) => filter === 'all' || p.relationship === filter);
+  const filtered = people
+    .filter((p) => filter === 'all' || p.relationship === filter)
+    .filter((p) => knownFromFilter === 'all' || p.knownFrom === knownFromFilter);
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === 'name') return a.name.localeCompare(b.name);
     return daysUntilBirthday(a.dateOfBirth) - daysUntilBirthday(b.dateOfBirth);
@@ -92,6 +95,40 @@ export default function PeoplePage() {
               </button>
             ))}
           </div>
+          {/* Known from filter */}
+          {(() => {
+            const knownFromValues = [...new Set(people.map((p) => p.knownFrom).filter(Boolean))] as KnownFrom[];
+            if (knownFromValues.length === 0) return null;
+            const labels: Record<string, string> = {
+              school: 'School', dance: 'Dance', sports: 'Sports', scouts: 'Scouts',
+              neighbourhood: 'Neighbourhood', work: 'Work', church: 'Church',
+              'family-friend': 'Family friend', other: 'Other',
+            };
+            return (
+              <div className="flex items-center gap-1 bg-mint/40 rounded-full p-1">
+                <button
+                  onClick={() => setKnownFromFilter('all')}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                    knownFromFilter === 'all' ? 'bg-teal text-white' : 'text-teal hover:bg-mint'
+                  }`}
+                >
+                  All
+                </button>
+                {knownFromValues.map((kf) => (
+                  <button
+                    key={kf}
+                    onClick={() => setKnownFromFilter(kf)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                      knownFromFilter === kf ? 'bg-teal text-white' : 'text-teal hover:bg-mint'
+                    }`}
+                  >
+                    {labels[kf] || kf}
+                  </button>
+                ))}
+              </div>
+            );
+          })()}
+
           <div className="flex items-center gap-1 bg-lavender/40 rounded-full p-1 ml-auto">
             <button
               onClick={() => setSortBy('upcoming')}
@@ -153,6 +190,21 @@ export default function PeoplePage() {
                     </h3>
                     <p className="text-sm text-foreground/50">
                       Age {age} &middot; {formatDate(person.dateOfBirth)}
+                      {(person.connectedThrough || person.knownFrom) && (
+                        <span className="text-foreground/40">
+                          {' '}&middot;{' '}
+                          {[
+                            person.connectedThrough ? `Via ${person.connectedThrough}` : null,
+                            person.knownFrom
+                              ? person.knownFrom === 'other' && person.knownFromCustom
+                                ? person.knownFromCustom
+                                : person.knownFrom === 'family-friend'
+                                ? 'Family friend'
+                                : person.knownFrom.charAt(0).toUpperCase() + person.knownFrom.slice(1)
+                              : null,
+                          ].filter(Boolean).join(' · ')}
+                        </span>
+                      )}
                     </p>
                   </div>
                 </Link>
