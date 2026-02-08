@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePeople } from '@/hooks/usePeople';
 import { Person, Relationship } from '@/types';
@@ -445,6 +446,16 @@ export default function Home() {
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-fade-up">
+            {/* Logo - mobile only */}
+            <div className="flex justify-center mb-6 sm:hidden">
+              <Image
+                src="/logo.png"
+                alt="Tiaras & Trains"
+                width={256}
+                height={256}
+                className="w-40 h-40 rounded-3xl border-3 border-purple shadow-lg shadow-purple/20"
+              />
+            </div>
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-purple leading-tight text-center sm:text-left">
               Tiaras &amp;{' '}
               <span className="bg-gradient-to-r from-pink via-coral to-orange bg-clip-text text-transparent">
