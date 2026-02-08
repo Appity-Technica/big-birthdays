@@ -37,12 +37,32 @@ class DashboardScreen extends ConsumerWidget {
             slivers: [
               SliverAppBar(
                 floating: true,
-                title: Text(
-                  'Tiaras & Trains',
-                  style: GoogleFonts.baloo2(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.purple,
-                  ),
+                toolbarHeight: 72,
+                title: Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.purple, width: 2),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          'assets/logo.png',
+                          width: 48,
+                          height: 48,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Tiaras & Trains',
+                      style: GoogleFonts.baloo2(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.purple,
+                      ),
+                    ),
+                  ],
                 ),
                 actions: [
                   IconButton(
@@ -145,7 +165,20 @@ class DashboardScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('🎈🎁🎂', style: TextStyle(fontSize: 48)),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.purple, width: 3),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(17),
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: 120,
+                  height: 120,
+                ),
+              ),
+            ),
             const SizedBox(height: 24),
             Text(
               'No birthdays yet!',

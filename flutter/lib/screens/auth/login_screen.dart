@@ -76,26 +76,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    '🎂',
-                    style: const TextStyle(fontSize: 64),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Tiaras & Trains',
-                    style: GoogleFonts.baloo2(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.purple,
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: AppColors.purple, width: 3),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Birthday Tracker',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.foreground.withValues(alpha: 0.5),
-                      fontWeight: FontWeight.w600,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(21),
+                      child: Image.asset(
+                        'assets/logo.png',
+                        width: 160,
+                        height: 160,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 32),
