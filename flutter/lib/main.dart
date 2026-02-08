@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 import 'core/theme.dart';
 import 'router/app_router.dart';
+import 'screens/splash_screen.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -41,6 +42,7 @@ class BigBirthdaysApp extends ConsumerWidget {
       theme: buildAppTheme(),
       routerConfig: router,
       debugShowCheckedModeBanner: false,
+      builder: (context, child) => SplashScreen(child: child!),
     );
   }
 }
