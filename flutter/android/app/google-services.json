@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "839942305953",
+    "project_id": "big-birthdays",
+    "storage_bucket": "big-birthdays.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:839942305953:android:a0e8aba914bd024faf18e0",
+        "android_client_info": {
+          "package_name": "com.appitytechnica.bigbirthdays"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "839942305953-oe31tcq4mrunju3p2ba9lvit5n2n9fdb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEPkwMAd7P4pLKFNYr0kcUPhkJJRhoRI0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "839942305953-oe31tcq4mrunju3p2ba9lvit5n2n9fdb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

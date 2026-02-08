@@ -102,6 +102,20 @@ export const sendBirthdayNotifications = onSchedule(
                 link: '/',
               },
             },
+            android: {
+              priority: 'high',
+              notification: {
+                channelId: 'birthday_reminders',
+              },
+            },
+            apns: {
+              payload: {
+                aps: {
+                  sound: 'default',
+                  badge: 1,
+                },
+              },
+            },
           });
         } catch (err: unknown) {
           const error = err as { code?: string };

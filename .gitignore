@@ -43,3 +43,6 @@ next-env.d.ts
 # firebase functions
 functions/node_modules
 functions/lib
+
+# Flutter (subdirectory gitignores handle most exclusions)
+flutter/.flutter-plugins
