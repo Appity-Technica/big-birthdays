@@ -211,6 +211,27 @@ class PersonBottomSheet extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
 
+              // Buy a Gift
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    context.push('/people/${person.id}/gifts');
+                  },
+                  icon: const Icon(Icons.card_giftcard),
+                  label: const Text('Buy a Gift'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.pink,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    textStyle: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+
               // Actions
               Row(
                 children: [

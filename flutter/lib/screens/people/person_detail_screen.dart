@@ -31,6 +31,10 @@ class PersonDetailScreen extends ConsumerWidget {
       appBar: AppBar(
         actions: [
           IconButton(
+            icon: const Icon(Icons.card_giftcard, color: AppColors.pink),
+            onPressed: () => context.push('/people/${person.id}/gifts'),
+          ),
+          IconButton(
             icon: const Icon(Icons.edit_outlined),
             onPressed: () => context.push('/people/${person.id}/edit'),
           ),

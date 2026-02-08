@@ -8,6 +8,8 @@ import '../screens/people/people_list_screen.dart';
 import '../screens/people/person_detail_screen.dart';
 import '../screens/people/person_form_screen.dart';
 import '../screens/people/import_contacts_screen.dart';
+import '../screens/gifts/gift_review_screen.dart';
+import '../screens/gifts/gift_results_screen.dart';
 import '../screens/calendar/calendar_screen.dart';
 import '../screens/settings/settings_screen.dart';
 import '../widgets/app_scaffold.dart';
@@ -75,6 +77,22 @@ final routerProvider = Provider<GoRouter>((ref) {
                     builder: (_, state) => PersonFormScreen(
                       personId: state.pathParameters['id'],
                     ),
+                  ),
+                  GoRoute(
+                    path: 'gifts',
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (_, state) => GiftReviewScreen(
+                      personId: state.pathParameters['id']!,
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'results',
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (_, state) => GiftResultsScreen(
+                          personId: state.pathParameters['id']!,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -2,6 +2,11 @@ import { initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getMessaging } from 'firebase-admin/messaging';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { defineSecret } from 'firebase-functions/params';
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropicKey = defineSecret('ANTHROPIC_API_KEY');
 
 initializeApp();
 
@@ -129,6 +134,119 @@ export const sendBirthdayNotifications = onSchedule(
           console.error(`Failed to send notification to user ${userDoc.id}:`, err);
         }
       }
+    }
+  }
+);
+
+// --- AI Gift Suggestions ---
+
+interface GiftRequest {
+  name: string;
+  age: number | null;
+  relationship: string;
+  interests: string[];
+  pastGifts: { year: number; description: string; rating: number | null }[];
+  notes: string | null;
+  giftIdeas: string[];
+}
+
+interface GiftSuggestion {
+  name: string;
+  description: string;
+  estimatedPrice: string;
+  purchaseUrl: string;
+}
+
+function buildGiftPrompt(data: GiftRequest): string {
+  let prompt = `You are a gift recommendation expert. Based on the following information about a person, suggest exactly 3 thoughtful, purchasable gift ideas. Return ONLY a JSON array with no other text, no markdown fences, no explanation.
+
+Each gift object must have these exact fields:
+- "name": short product name
+- "description": 2-3 sentence description of why this gift suits the person
+- "estimatedPrice": price range as a string (e.g. "£20-£30")
+- "purchaseUrl": a real, working URL where this can be purchased (use Amazon UK, Etsy, Not On The High Street, or other major UK retailers)
+
+Person details:
+- Name: ${data.name}`;
+
+  if (data.age !== null) prompt += `\n- Age: ${data.age}`;
+  prompt += `\n- Relationship: ${data.relationship}`;
+
+  if (data.interests.length > 0) {
+    prompt += `\n- Interests: ${data.interests.join(', ')}`;
+  }
+
+  if (data.pastGifts.length > 0) {
+    prompt += `\n- Past gifts:`;
+    for (const g of data.pastGifts) {
+      prompt += `\n  - ${g.year}: ${g.description}`;
+      if (g.rating !== null) prompt += ` (rated ${g.rating}/5)`;
+    }
+  }
+
+  if (data.notes) prompt += `\n- Notes/preferences: ${data.notes}`;
+
+  if (data.giftIdeas.length > 0) {
+    prompt += `\n- Existing gift ideas to consider: ${data.giftIdeas.join(', ')}`;
+  }
+
+  prompt += `\n\nIMPORTANT: Suggest gifts that are different from past gifts. If a past gift had a high rating, use it as a signal of what they like. Provide real product URLs from major UK retailers. Return ONLY valid JSON array - no markdown, no explanation.`;
+
+  return prompt;
+}
+
+function parseGiftResponse(text: string): GiftSuggestion[] {
+  // Try direct JSON parse first
+  try {
+    return JSON.parse(text);
+  } catch {
+    // Try extracting from markdown code fences
+    const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (fenceMatch) {
+      return JSON.parse(fenceMatch[1].trim());
+    }
+    // Try finding array brackets
+    const bracketMatch = text.match(/\[[\s\S]*\]/);
+    if (bracketMatch) {
+      return JSON.parse(bracketMatch[0]);
+    }
+    throw new Error('Could not parse gift suggestions from AI response');
+  }
+}
+
+export const getGiftSuggestions = onCall(
+  {
+    region: 'europe-west2',
+    secrets: [anthropicKey],
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', 'Must be signed in');
+    }
+
+    const data = request.data as GiftRequest;
+    if (!data.name) {
+      throw new HttpsError('invalid-argument', 'Person name is required');
+    }
+
+    try {
+      const client = new Anthropic({ apiKey: anthropicKey.value() });
+      const prompt = buildGiftPrompt(data);
+
+      const message = await client.messages.create({
+        model: 'claude-opus-4-6',
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: prompt }],
+      });
+
+      const text = message.content[0].type === 'text' ? message.content[0].text : '';
+      const suggestions = parseGiftResponse(text);
+
+      return { suggestions };
+    } catch (err: unknown) {
+      console.error('Gift suggestion error:', err);
+      const msg = err instanceof Error ? err.message : 'Unknown error';
+      throw new HttpsError('internal', `Failed to get gift suggestions: ${msg}`);
     }
   }
 );
