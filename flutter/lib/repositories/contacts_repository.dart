@@ -1,4 +1,4 @@
-import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:flutter/services.dart';
 
 class DeviceContact {
   final String name;
@@ -8,37 +8,22 @@ class DeviceContact {
 }
 
 class ContactsRepository {
-  Future<bool> requestPermission() async {
-    return await FlutterContacts.requestPermission();
-  }
+  static const _channel = MethodChannel('com.appitytechnica.bigbirthdays/contacts');
 
   Future<List<DeviceContact>> getContactsWithBirthdays() async {
-    if (!await FlutterContacts.requestPermission()) return [];
-
-    final contacts = await FlutterContacts.getContacts(
-      withProperties: true,
-      withPhoto: false,
-    );
-
-    final results = <DeviceContact>[];
-    for (final contact in contacts) {
-      for (final event in contact.events) {
-        if (event.label == EventLabel.birthday) {
-          final year = event.year;
-          final yearStr =
-              year != null ? year.toString().padLeft(4, '0') : '0000';
-          final month = event.month.toString().padLeft(2, '0');
-          final day = event.day.toString().padLeft(2, '0');
-          results.add(DeviceContact(
-            name: contact.displayName,
-            dateOfBirth: '$yearStr-$month-$day',
-          ));
-          break;
-        }
-      }
+    try {
+      final List<dynamic> result = await _channel.invokeMethod('getContactsWithBirthdays');
+      return result.map((c) {
+        final map = Map<String, dynamic>.from(c);
+        return DeviceContact(
+          name: map['name'] as String,
+          dateOfBirth: map['dateOfBirth'] as String,
+        );
+      }).toList()
+        ..sort((a, b) => a.name.compareTo(b.name));
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENIED') return [];
+      rethrow;
     }
-
-    results.sort((a, b) => a.name.compareTo(b.name));
-    return results;
   }
 }
