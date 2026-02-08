@@ -177,3 +177,69 @@ export function parseFile(text: string, filename: string): ImportContact[] {
   if (ext === 'json') return parseJSON(text);
   return parseCSV(text);
 }
+
+// ── Export ────────────────────────────────────────────────
+
+interface ExportPerson {
+  name: string;
+  dateOfBirth: string;
+  relationship: string;
+  connectedThrough?: string;
+  knownFrom?: string;
+  knownFromCustom?: string;
+  notes?: string;
+  interests?: string[];
+  giftIdeas?: string[];
+  pastGifts?: { year: number; description: string; url?: string; rating?: number }[];
+}
+
+/** Escape a value for CSV (wrap in quotes if it contains comma, quote, or newline). */
+function escapeCSV(value: string): string {
+  if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
+  return value;
+}
+
+/**
+ * Generate a CSV string from people data.
+ * Columns: Name, Date of Birth, Relationship, Connected Through, Known From, Notes, Interests, Gift Ideas
+ */
+export function generateCSV(people: ExportPerson[]): string {
+  const headers = ['Name', 'Date of Birth', 'Relationship', 'Connected Through', 'Known From', 'Notes', 'Interests', 'Gift Ideas'];
+  const rows = people.map((p) => [
+    escapeCSV(p.name),
+    escapeCSV(p.dateOfBirth),
+    escapeCSV(p.relationship),
+    escapeCSV(p.connectedThrough || ''),
+    escapeCSV(p.knownFrom === 'other' && p.knownFromCustom ? p.knownFromCustom : p.knownFrom || ''),
+    escapeCSV(p.notes || ''),
+    escapeCSV((p.interests || []).join(', ')),
+    escapeCSV((p.giftIdeas || []).join(', ')),
+  ]);
+
+  return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+}
+
+/**
+ * Generate a JSON string from people data.
+ * Includes all person fields except internal IDs and timestamps.
+ */
+export function generateJSON(people: ExportPerson[]): string {
+  const exported = people.map((p) => {
+    const obj: Record<string, unknown> = {
+      name: p.name,
+      dateOfBirth: p.dateOfBirth,
+      relationship: p.relationship,
+    };
+    if (p.connectedThrough) obj.connectedThrough = p.connectedThrough;
+    if (p.knownFrom) obj.knownFrom = p.knownFrom;
+    if (p.knownFromCustom) obj.knownFromCustom = p.knownFromCustom;
+    if (p.notes) obj.notes = p.notes;
+    if (p.interests?.length) obj.interests = p.interests;
+    if (p.giftIdeas?.length) obj.giftIdeas = p.giftIdeas;
+    if (p.pastGifts?.length) obj.pastGifts = p.pastGifts;
+    return obj;
+  });
+  return JSON.stringify(exported, null, 2);
+}
