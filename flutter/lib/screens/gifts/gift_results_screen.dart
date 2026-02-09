@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants.dart';
 import '../../providers/people_provider.dart';
 import '../../providers/gift_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/loading_spinner.dart';
 import '../../widgets/tag_chip.dart';
 
@@ -79,9 +80,11 @@ class GiftResultsScreen extends ConsumerWidget {
                 ElevatedButton.icon(
                   onPressed: () {
                     if (person != null) {
+                      final prefs = ref.read(userPreferencesProvider).value;
+                      final country = prefs?.country ?? 'AU';
                       ref
                           .read(giftSuggestionsProvider.notifier)
-                          .fetchSuggestions(person);
+                          .fetchSuggestions(person, country: country);
                     }
                   },
                   icon: const Icon(Icons.refresh),
@@ -210,9 +213,11 @@ class GiftResultsScreen extends ConsumerWidget {
                 child: OutlinedButton.icon(
                   onPressed: () {
                     if (person != null) {
+                      final prefs = ref.read(userPreferencesProvider).value;
+                      final country = prefs?.country ?? 'AU';
                       ref
                           .read(giftSuggestionsProvider.notifier)
-                          .fetchSuggestions(person);
+                          .fetchSuggestions(person, country: country);
                     }
                   },
                   icon: const Icon(Icons.auto_awesome),

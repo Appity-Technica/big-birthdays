@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/notification_settings.dart';
+import '../models/user_preferences.dart';
 import '../repositories/settings_repository.dart';
 import 'auth_provider.dart';
 
@@ -12,4 +13,11 @@ final notificationSettingsProvider =
   final user = ref.watch(authStateProvider).value;
   if (user == null) return null;
   return ref.watch(settingsRepositoryProvider).getSettings(user.uid);
+});
+
+final userPreferencesProvider =
+    FutureProvider<UserPreferences>((ref) async {
+  final user = ref.watch(authStateProvider).value;
+  if (user == null) return const UserPreferences();
+  return ref.watch(settingsRepositoryProvider).getPreferences(user.uid);
 });

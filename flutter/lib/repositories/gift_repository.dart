@@ -7,7 +7,7 @@ class GiftRepository {
   final FirebaseFunctions _functions =
       FirebaseFunctions.instanceFor(region: 'europe-west2');
 
-  Future<List<GiftSuggestion>> getGiftSuggestions(Person person) async {
+  Future<List<GiftSuggestion>> getGiftSuggestions(Person person, {String country = 'AU'}) async {
     final age = getCurrentAge(person.dateOfBirth);
 
     final data = <String, dynamic>{
@@ -24,6 +24,7 @@ class GiftRepository {
           .toList(),
       'notes': person.notes,
       'giftIdeas': person.giftIdeas ?? [],
+      'country': country,
     };
 
     final callable = _functions.httpsCallable('getGiftSuggestions');

@@ -15,11 +15,11 @@ class GiftSuggestionsNotifier
   @override
   AsyncValue<List<GiftSuggestion>> build() => const AsyncValue.data([]);
 
-  Future<void> fetchSuggestions(Person person) async {
+  Future<void> fetchSuggestions(Person person, {String country = 'AU'}) async {
     state = const AsyncValue.loading();
     try {
       final repository = ref.read(giftRepositoryProvider);
-      final suggestions = await repository.getGiftSuggestions(person);
+      final suggestions = await repository.getGiftSuggestions(person, country: country);
       state = AsyncValue.data(suggestions);
     } catch (e, st) {
       state = AsyncValue.error(e, st);

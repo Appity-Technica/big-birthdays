@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants.dart';
 import '../../models/enums.dart';
 import '../../models/notification_settings.dart' as ns;
+import '../../models/user_preferences.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/loading_spinner.dart';
@@ -23,6 +24,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     NotificationTiming.oneDay,
   };
   String? _fcmToken;
+  String _country = 'AU';
   bool _loading = true;
   bool _saving = false;
   bool _saved = false;
@@ -37,15 +39,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
 
-    final settings = await ref
-        .read(settingsRepositoryProvider)
-        .getSettings(user.uid);
+    final repo = ref.read(settingsRepositoryProvider);
+    final settings = await repo.getSettings(user.uid);
+    final prefs = await repo.getPreferences(user.uid);
 
     if (settings != null) {
       _enabled = settings.enabled;
       _timings = settings.defaultTimings.toSet();
       _fcmToken = settings.fcmToken;
     }
+    _country = prefs.country;
     setState(() => _loading = false);
   }
 
@@ -78,15 +81,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     setState(() => _saving = true);
 
+    final repo = ref.read(settingsRepositoryProvider);
+
     final settings = ns.NotificationSettings(
       enabled: _enabled,
       defaultTimings: _timings.toList(),
       fcmToken: _fcmToken,
     );
 
-    await ref
-        .read(settingsRepositoryProvider)
-        .saveSettings(user.uid, settings);
+    await Future.wait([
+      repo.saveSettings(user.uid, settings),
+      repo.savePreferences(user.uid, UserPreferences(country: _country)),
+    ]);
+
+    ref.invalidate(userPreferencesProvider);
 
     setState(() {
       _saving = false;
@@ -108,6 +116,54 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          // Country selection
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.mint.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.mint),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Country',
+                    style: GoogleFonts.nunito(
+                        fontWeight: FontWeight.w700, fontSize: 14)),
+                const SizedBox(height: 4),
+                Text(
+                  'Gift suggestions will be tailored to your country.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.foreground.withValues(alpha: 0.5),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: _country,
+                  onChanged: (value) {
+                    if (value != null) setState(() => _country = value);
+                  },
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  items: UserPreferences.supportedCountries.entries
+                      .map((e) => DropdownMenuItem(
+                            value: e.key,
+                            child: Text(e.value,
+                                style: const TextStyle(fontSize: 14)),
+                          ))
+                      .toList(),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
           // Push notifications toggle
           Container(
             padding: const EdgeInsets.all(16),

@@ -9,6 +9,7 @@ import '../../models/person.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/people_provider.dart';
 import '../../providers/gift_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/initials_avatar.dart';
 import '../../widgets/loading_spinner.dart';
 import '../../widgets/tag_chip.dart';
@@ -255,13 +256,15 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
             'Interests',
             color: AppColors.mint,
             hasData: person.interests != null && person.interests!.isNotEmpty,
-            child: Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: person.interests!
-                  .map((i) => TagChip(label: i, color: AppColors.teal))
-                  .toList(),
-            ),
+            child: person.interests != null && person.interests!.isNotEmpty
+                ? Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: person.interests!
+                        .map((i) => TagChip(label: i, color: AppColors.teal))
+                        .toList(),
+                  )
+                : null,
           ),
 
           // Past Gifts
@@ -270,26 +273,28 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
             color: AppColors.pinkLight,
             hasData:
                 person.pastGifts != null && person.pastGifts!.isNotEmpty,
-            child: Column(
-              children: person.pastGifts!
-                  .map((g) => Padding(
-                        padding: const EdgeInsets.only(bottom: 6),
-                        child: Row(
-                          children: [
-                            TagChip(
-                                label: '${g.year}', color: AppColors.pink),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(g.description,
-                                  style: const TextStyle(fontSize: 13)),
-                            ),
-                            if (g.rating != null && g.rating! > 0)
-                              StarRatingDisplay(rating: g.rating!, size: 14),
-                          ],
-                        ),
-                      ))
-                  .toList(),
-            ),
+            child: person.pastGifts != null && person.pastGifts!.isNotEmpty
+                ? Column(
+                    children: person.pastGifts!
+                        .map((g) => Padding(
+                              padding: const EdgeInsets.only(bottom: 6),
+                              child: Row(
+                                children: [
+                                  TagChip(
+                                      label: '${g.year}', color: AppColors.pink),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(g.description,
+                                        style: const TextStyle(fontSize: 13)),
+                                  ),
+                                  if (g.rating != null && g.rating! > 0)
+                                    StarRatingDisplay(rating: g.rating!, size: 14),
+                                ],
+                              ),
+                            ))
+                        .toList(),
+                  )
+                : null,
           ),
 
           // Notes
@@ -297,8 +302,9 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
             'Notes',
             color: AppColors.lavender,
             hasData: person.notes != null && person.notes!.isNotEmpty,
-            child:
-                Text(person.notes!, style: const TextStyle(fontSize: 13)),
+            child: person.notes != null && person.notes!.isNotEmpty
+                ? Text(person.notes!, style: const TextStyle(fontSize: 13))
+                : null,
           ),
 
           // Gift Ideas
@@ -307,13 +313,15 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
             color: AppColors.yellowLight,
             hasData:
                 person.giftIdeas != null && person.giftIdeas!.isNotEmpty,
-            child: Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: person.giftIdeas!
-                  .map((i) => TagChip(label: i, color: AppColors.orange))
-                  .toList(),
-            ),
+            child: person.giftIdeas != null && person.giftIdeas!.isNotEmpty
+                ? Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: person.giftIdeas!
+                        .map((i) => TagChip(label: i, color: AppColors.orange))
+                        .toList(),
+                  )
+                : null,
           ),
 
           // Edit hint
@@ -340,9 +348,11 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
                     (!yearIsKnown && _enteredAge != null)
                         ? _personWithAge(person)
                         : person;
+                final prefs = ref.read(userPreferencesProvider).value;
+                final country = prefs?.country ?? 'AU';
                 ref
                     .read(giftSuggestionsProvider.notifier)
-                    .fetchSuggestions(personForSuggestion);
+                    .fetchSuggestions(personForSuggestion, country: country);
                 context.push('/people/${person.id}/gifts/results');
               },
               icon: const Icon(Icons.auto_awesome),
@@ -416,7 +426,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
   }
 
   Widget _section(String title,
-      {required Color color, required bool hasData, required Widget child}) {
+      {required Color color, required bool hasData, Widget? child}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
@@ -439,7 +449,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
               ),
             ),
             const SizedBox(height: 6),
-            if (hasData)
+            if (hasData && child != null)
               child
             else
               Row(

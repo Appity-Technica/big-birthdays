@@ -148,7 +148,25 @@ interface GiftRequest {
   pastGifts: { year: number; description: string; rating: number | null }[];
   notes: string | null;
   giftIdeas: string[];
+  country?: string;
 }
+
+interface CountryConfig {
+  name: string;
+  currency: string;
+  retailers: string;
+}
+
+const COUNTRY_CONFIG: Record<string, CountryConfig> = {
+  'AU': { name: 'Australia', currency: 'A$', retailers: 'Amazon Australia, Kmart, Big W, The Iconic, Myer' },
+  'GB': { name: 'United Kingdom', currency: '£', retailers: 'Amazon UK, Etsy, Not On The High Street, John Lewis' },
+  'US': { name: 'United States', currency: '$', retailers: 'Amazon, Etsy, Target, Nordstrom' },
+  'CA': { name: 'Canada', currency: 'C$', retailers: 'Amazon Canada, Indigo, Canadian Tire, Hudson\'s Bay' },
+  'IE': { name: 'Ireland', currency: '€', retailers: 'Amazon, Etsy, Brown Thomas, Arnotts' },
+  'NZ': { name: 'New Zealand', currency: 'NZ$', retailers: 'Amazon, The Warehouse, Mighty Ape, Farmers' },
+  'ZA': { name: 'South Africa', currency: 'R', retailers: 'Takealot, Superbalist, Mr Price, Woolworths' },
+  'IN': { name: 'India', currency: '₹', retailers: 'Amazon India, Flipkart, Myntra, Nykaa' },
+};
 
 interface GiftSuggestion {
   name: string;
@@ -158,19 +176,23 @@ interface GiftSuggestion {
 }
 
 function buildGiftPrompt(data: GiftRequest): string {
+  const countryCode = data.country || 'AU';
+  const config = COUNTRY_CONFIG[countryCode] || COUNTRY_CONFIG['AU'];
+
   let prompt = `You are a gift recommendation expert. Based on the following information about a person, suggest exactly 3 thoughtful, purchasable gift ideas. Return ONLY a JSON array with no other text, no markdown fences, no explanation.
 
 Each gift object must have these exact fields:
 - "name": short product name
 - "description": 2-3 sentence description of why this gift suits the person
-- "estimatedPrice": price range as a string (e.g. "£20-£30")
-- "purchaseUrl": a real, working URL where this can be purchased (use Amazon UK, Etsy, Not On The High Street, or other major UK retailers)
+- "estimatedPrice": price range as a string (e.g. "${config.currency}20-${config.currency}30")
+- "purchaseUrl": a real, working URL where this can be purchased (use ${config.retailers}, or other major ${config.name} retailers)
 
 Person details:
 - Name: ${data.name}`;
 
   if (data.age !== null) prompt += `\n- Age: ${data.age}`;
   prompt += `\n- Relationship: ${data.relationship}`;
+  prompt += `\n- Country: ${config.name}`;
 
   if (data.interests.length > 0) {
     prompt += `\n- Interests: ${data.interests.join(', ')}`;
@@ -190,7 +212,7 @@ Person details:
     prompt += `\n- Existing gift ideas to consider: ${data.giftIdeas.join(', ')}`;
   }
 
-  prompt += `\n\nIMPORTANT: Suggest gifts that are different from past gifts. If a past gift had a high rating, use it as a signal of what they like. Provide real product URLs from major UK retailers. Return ONLY valid JSON array - no markdown, no explanation.`;
+  prompt += `\n\nIMPORTANT: Suggest gifts that are different from past gifts. If a past gift had a high rating, use it as a signal of what they like. Use prices in ${config.currency} and provide real product URLs from major ${config.name} retailers. Return ONLY valid JSON array - no markdown, no explanation.`;
 
   return prompt;
 }
