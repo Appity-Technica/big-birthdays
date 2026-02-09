@@ -13,8 +13,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 }
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -42,7 +43,9 @@ class BigBirthdaysApp extends ConsumerWidget {
       theme: buildAppTheme(),
       routerConfig: router,
       debugShowCheckedModeBanner: false,
-      builder: (context, child) => SplashScreen(child: child!),
+      builder: (context, child) => SplashScreen(
+        child: child ?? const Scaffold(body: SizedBox.shrink()),
+      ),
     );
   }
 }

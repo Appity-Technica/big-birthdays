@@ -13,6 +13,7 @@ import '../screens/gifts/gift_results_screen.dart';
 import '../screens/calendar/calendar_screen.dart';
 import '../screens/settings/settings_screen.dart';
 import '../widgets/app_scaffold.dart';
+import '../widgets/loading_spinner.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -26,14 +27,20 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final isLoggedIn = authState.value != null;
       final isLoading = authState.isLoading;
+      final isStartupRoute = state.matchedLocation == '/startup';
       final isLoginRoute = state.matchedLocation == '/login';
 
-      if (isLoading) return null;
+      if (isLoading && !isStartupRoute) return '/startup';
+      if (!isLoading && isStartupRoute) return isLoggedIn ? '/' : '/login';
       if (!isLoggedIn && !isLoginRoute) return '/login';
       if (isLoggedIn && isLoginRoute) return '/';
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/startup',
+        builder: (_, _) => const Scaffold(body: LoadingSpinner()),
+      ),
       GoRoute(
         path: '/login',
         builder: (_, _) => const LoginScreen(),
