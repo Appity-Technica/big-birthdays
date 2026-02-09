@@ -127,7 +127,7 @@ export default function NewPersonPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Sarah Johnson"
-            className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
+            className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
           />
         </div>
 
@@ -148,7 +148,7 @@ export default function NewPersonPage() {
                 value={dobDay}
                 onChange={(e) => setDobDay(e.target.value)}
                 placeholder="DD"
-                className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
               />
             </div>
             <div>
@@ -158,7 +158,7 @@ export default function NewPersonPage() {
                 required
                 value={dobMonth}
                 onChange={(e) => setDobMonth(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
               >
                 <option value="">Month</option>
                 {MONTHS.map((m, i) => (
@@ -176,7 +176,7 @@ export default function NewPersonPage() {
                 value={dobYear}
                 onChange={(e) => setDobYear(e.target.value)}
                 placeholder="YYYY"
-                className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
               />
             </div>
           </div>
@@ -222,7 +222,7 @@ export default function NewPersonPage() {
               value={connectedThrough}
               onChange={(e) => setConnectedThrough(e.target.value)}
               placeholder="e.g. Emma, Mum's bridge club, Dad's side"
-              className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
+              className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
             />
           </div>
 
@@ -253,7 +253,7 @@ export default function NewPersonPage() {
                 value={knownFromCustom}
                 onChange={(e) => setKnownFromCustom(e.target.value)}
                 placeholder="Where do you know them from?"
-                className="mt-2 w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
+                className="mt-2 w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
               />
             )}
           </div>
@@ -287,7 +287,7 @@ export default function NewPersonPage() {
                     onChange={(e) => setPartyYear(e.target.value)}
                     min="2000"
                     max={new Date().getFullYear() + 1}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground focus:outline-none focus:border-teal focus:ring-2 focus:ring-teal/10 transition-all"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground focus:outline-none focus:border-teal focus:ring-2 focus:ring-teal/10 transition-all"
                   />
                 </div>
                 <div>
@@ -299,7 +299,7 @@ export default function NewPersonPage() {
                     type="date"
                     value={partyDate}
                     onChange={(e) => setPartyDate(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground focus:outline-none focus:border-teal focus:ring-2 focus:ring-teal/10 transition-all"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground focus:outline-none focus:border-teal focus:ring-2 focus:ring-teal/10 transition-all"
                   />
                 </div>
               </div>
@@ -313,7 +313,7 @@ export default function NewPersonPage() {
                   value={partyInvited}
                   onChange={(e) => setPartyInvited(e.target.value)}
                   placeholder="e.g. Emma, Lily, Jack (comma separated)"
-                  className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-teal focus:ring-2 focus:ring-teal/10 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-teal focus:ring-2 focus:ring-teal/10 transition-all"
                 />
               </div>
               <div>
@@ -326,7 +326,7 @@ export default function NewPersonPage() {
                   value={partyNotes}
                   onChange={(e) => setPartyNotes(e.target.value)}
                   placeholder="e.g. Soft play venue, unicorn theme"
-                  className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-teal focus:ring-2 focus:ring-teal/10 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-teal focus:ring-2 focus:ring-teal/10 transition-all"
                 />
               </div>
             </div>
@@ -344,7 +344,7 @@ export default function NewPersonPage() {
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Any helpful notes about this person..."
             rows={3}
-            className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all resize-none"
+            className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all resize-none"
           />
         </div>
 
@@ -359,7 +359,7 @@ export default function NewPersonPage() {
             value={interests}
             onChange={(e) => setInterests(e.target.value)}
             placeholder="e.g. cooking, hiking, books (comma separated)"
-            className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
+            className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
           />
         </div>
 
@@ -374,7 +374,7 @@ export default function NewPersonPage() {
             value={giftIdeas}
             onChange={(e) => setGiftIdeas(e.target.value)}
             placeholder="e.g. new headphones, book voucher (comma separated)"
-            className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
+            className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-purple focus:ring-2 focus:ring-purple/10 transition-all"
           />
         </div>
 
@@ -383,7 +383,7 @@ export default function NewPersonPage() {
           <legend className="text-sm font-bold text-pink px-1">Past Gifts</legend>
 
           {pastGifts.map((gift, i) => (
-            <div key={i} className="space-y-3 p-4 rounded-xl bg-white/70 border border-pink/10">
+            <div key={i} className="space-y-3 p-4 rounded-xl bg-surface/70 border border-pink/10">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-pink">Gift {i + 1}</span>
                 <button
@@ -403,7 +403,7 @@ export default function NewPersonPage() {
                     onChange={(e) => updateGift(i, 'year', e.target.value)}
                     min="2000"
                     max={new Date().getFullYear()}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
                   />
                 </div>
                 <div className="col-span-2">
@@ -413,7 +413,7 @@ export default function NewPersonPage() {
                     value={gift.description}
                     onChange={(e) => updateGift(i, 'description', e.target.value)}
                     placeholder="e.g. LEGO City set"
-                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
                   />
                 </div>
               </div>
@@ -424,7 +424,7 @@ export default function NewPersonPage() {
                   value={gift.url}
                   onChange={(e) => updateGift(i, 'url', e.target.value)}
                   placeholder="https://..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-white text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-lavender bg-surface text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-pink focus:ring-2 focus:ring-pink/10 transition-all"
                 />
               </div>
               <div>

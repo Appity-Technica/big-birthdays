@@ -62,7 +62,7 @@ export default function PeoplePage() {
         <div className="flex items-center gap-2 self-start">
           <Link
             href="/people/export"
-            className="inline-flex items-center gap-2 px-5 py-3 bg-white text-purple border-2 border-purple/20 rounded-full font-bold text-sm hover:border-purple/40 hover:bg-lavender/30 transition-all"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-surface text-purple border-2 border-purple/20 rounded-full font-bold text-sm hover:border-purple/40 hover:bg-lavender/30 transition-all"
           >
             <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -71,7 +71,7 @@ export default function PeoplePage() {
           </Link>
           <Link
             href="/people/import"
-            className="inline-flex items-center gap-2 px-5 py-3 bg-white text-purple border-2 border-purple/20 rounded-full font-bold text-sm hover:border-purple/40 hover:bg-lavender/30 transition-all"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-surface text-purple border-2 border-purple/20 rounded-full font-bold text-sm hover:border-purple/40 hover:bg-lavender/30 transition-all"
           >
             <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
@@ -191,7 +191,7 @@ export default function PeoplePage() {
             return (
               <div
                 key={person.id}
-                className="group flex items-center gap-4 p-4 rounded-2xl bg-white border-2 border-lavender hover:border-purple/30 transition-all hover:shadow-lg hover:shadow-purple/5"
+                className="group flex items-center gap-4 p-4 rounded-2xl bg-surface border-2 border-lavender hover:border-purple/30 transition-all hover:shadow-lg hover:shadow-purple/5"
               >
                 <Link href={`/people/${person.id}`} className="flex items-center gap-4 flex-1 min-w-0">
                   <div className={`w-12 h-12 rounded-xl ${accent} text-white flex items-center justify-center text-base font-display font-bold shrink-0`}>

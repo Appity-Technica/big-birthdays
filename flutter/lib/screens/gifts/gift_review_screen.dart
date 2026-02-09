@@ -107,7 +107,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.foreground.withValues(alpha: 0.7),
+                      color: AppColors.fg(context).withValues(alpha: 0.7),
                     ),
                   ),
                 ),
@@ -168,7 +168,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
                       'Age unknown — enter it for better suggestions:',
                       style: TextStyle(
                         fontSize: 13,
-                        color: AppColors.foreground.withValues(alpha: 0.6),
+                        color: AppColors.fg(context).withValues(alpha: 0.6),
                       ),
                     ),
                   ),
@@ -190,7 +190,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
                         hintText: 'Age',
                         hintStyle: TextStyle(
                           fontSize: 13,
-                          color: AppColors.foreground.withValues(alpha: 0.3),
+                          color: AppColors.fg(context).withValues(alpha: 0.3),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 6),
@@ -254,7 +254,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
           // Interests
           _section(
             'Interests',
-            color: AppColors.mint,
+            color: AppColors.mn(context),
             hasData: person.interests != null && person.interests!.isNotEmpty,
             child: person.interests != null && person.interests!.isNotEmpty
                 ? Wrap(
@@ -300,7 +300,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
           // Notes
           _section(
             'Notes',
-            color: AppColors.lavender,
+            color: AppColors.lav(context),
             hasData: person.notes != null && person.notes!.isNotEmpty,
             child: person.notes != null && person.notes!.isNotEmpty
                 ? Text(person.notes!, style: const TextStyle(fontSize: 13))
@@ -415,7 +415,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
             child: IconButton(
               icon: Icon(Icons.close,
                   size: 16,
-                  color: AppColors.foreground.withValues(alpha: 0.4)),
+                  color: AppColors.fg(context).withValues(alpha: 0.4)),
               onPressed: () => setState(() => _yearSaved = true),
               padding: EdgeInsets.zero,
             ),
@@ -445,7 +445,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
               style: GoogleFonts.baloo2(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: AppColors.foreground,
+                color: AppColors.fg(context),
               ),
             ),
             const SizedBox(height: 6),
@@ -456,7 +456,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
                 children: [
                   Icon(Icons.info_outline,
                       size: 16,
-                      color: AppColors.foreground.withValues(alpha: 0.3)),
+                      color: AppColors.fg(context).withValues(alpha: 0.3)),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -464,7 +464,7 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
                       style: TextStyle(
                         fontSize: 13,
                         fontStyle: FontStyle.italic,
-                        color: AppColors.foreground.withValues(alpha: 0.4),
+                        color: AppColors.fg(context).withValues(alpha: 0.4),
                       ),
                     ),
                   ),

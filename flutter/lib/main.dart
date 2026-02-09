@@ -41,6 +41,7 @@ class BigBirthdaysApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Tiaras & Trains',
       theme: buildAppTheme(),
+      darkTheme: buildDarkTheme(),
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       builder: (context, child) => SplashScreen(

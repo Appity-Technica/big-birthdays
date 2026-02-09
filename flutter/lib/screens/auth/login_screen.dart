@@ -102,8 +102,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       label: const Text('Continue with Google'),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        side: const BorderSide(
-                            color: AppColors.lavender, width: 2),
+                        side: BorderSide(
+                            color: AppColors.lav(context), width: 2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -116,18 +116,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Expanded(
                         child: Divider(
                             color:
-                                AppColors.foreground.withValues(alpha: 0.1))),
+                                AppColors.fg(context).withValues(alpha: 0.1))),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text('or',
                           style: TextStyle(
-                              color: AppColors.foreground
+                              color: AppColors.fg(context)
                                   .withValues(alpha: 0.4))),
                     ),
                     Expanded(
                         child: Divider(
                             color:
-                                AppColors.foreground.withValues(alpha: 0.1))),
+                                AppColors.fg(context).withValues(alpha: 0.1))),
                   ]),
                   const SizedBox(height: 24),
 
@@ -174,12 +174,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: ElevatedButton(
                       onPressed: _loading ? null : _handleEmailAuth,
                       child: _loading
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.surface,
                               ),
                             )
                           : Text(_isSignUp ? 'Sign Up' : 'Sign In'),

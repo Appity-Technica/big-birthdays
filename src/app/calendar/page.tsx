@@ -132,7 +132,7 @@ export default function CalendarPage() {
       </div>
 
       {/* Calendar grid */}
-      <div className="rounded-2xl border-2 border-lavender overflow-hidden bg-white">
+      <div className="rounded-2xl border-2 border-lavender overflow-hidden bg-surface">
         {/* Day headers */}
         <div className="grid grid-cols-7 bg-lavender/30">
           {DAY_NAMES.map((day) => (
@@ -218,7 +218,7 @@ export default function CalendarPage() {
                   <Link
                     key={person.id}
                     href={`/people/${person.id}`}
-                    className="flex items-center gap-3 p-3 rounded-xl border-2 border-lavender hover:border-purple/30 bg-white transition-all hover:shadow-md"
+                    className="flex items-center gap-3 p-3 rounded-xl border-2 border-lavender hover:border-purple/30 bg-surface transition-all hover:shadow-md"
                   >
                     <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink to-coral text-white flex items-center justify-center text-sm font-display font-bold">
                       {getInitials(person.name)}

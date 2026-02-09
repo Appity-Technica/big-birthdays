@@ -28,9 +28,9 @@ class UpcomingCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.lavender, width: 2),
+          border: Border.all(color: AppColors.lav(context), width: 2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +52,7 @@ class UpcomingCard extends StatelessWidget {
                         style: GoogleFonts.nunito(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.foreground,
+                          color: AppColors.fg(context),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -61,7 +61,7 @@ class UpcomingCard extends StatelessWidget {
                         formatDate(person.dateOfBirth),
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.foreground.withValues(alpha: 0.5),
+                          color: AppColors.fg(context).withValues(alpha: 0.5),
                         ),
                       ),
                     ],

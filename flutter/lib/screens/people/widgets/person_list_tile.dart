@@ -46,7 +46,7 @@ class PersonListTile extends StatelessWidget {
             formatDate(person.dateOfBirth),
             style: TextStyle(
               fontSize: 12,
-              color: AppColors.foreground.withValues(alpha: 0.5),
+              color: AppColors.fg(context).withValues(alpha: 0.5),
             ),
           ),
           if (age != null)
@@ -54,7 +54,7 @@ class PersonListTile extends StatelessWidget {
               ' · Age $age',
               style: TextStyle(
                 fontSize: 12,
-                color: AppColors.foreground.withValues(alpha: 0.5),
+                color: AppColors.fg(context).withValues(alpha: 0.5),
               ),
             ),
         ],
@@ -74,7 +74,7 @@ class PersonListTile extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.edit_outlined,
                   size: 18,
-                  color: AppColors.foreground.withValues(alpha: 0.3)),
+                  color: AppColors.fg(context).withValues(alpha: 0.3)),
               onPressed: onEdit,
             ),
         ],

@@ -121,7 +121,7 @@ export default function PersonDetailPage() {
             <h3 className="text-sm font-bold text-teal mb-3">Parties</h3>
             <div className="space-y-3">
               {person.parties.map((party, i) => (
-                <div key={i} className="p-3 rounded-xl bg-white/70">
+                <div key={i} className="p-3 rounded-xl bg-surface/70">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-sm font-bold text-foreground">{party.year}</span>
                     {party.date && (
@@ -187,7 +187,7 @@ export default function PersonDetailPage() {
             <h3 className="text-sm font-bold text-pink mb-3">Past Gifts</h3>
             <div className="space-y-2">
               {person.pastGifts.map((gift, i) => (
-                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/70">
+                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-surface/70">
                   <span className="px-2.5 py-1 rounded-full bg-pink/10 text-pink text-xs font-bold tabular-nums shrink-0">
                     {gift.year}
                   </span>

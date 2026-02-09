@@ -25,7 +25,7 @@ class MonthSummary extends StatelessWidget {
           child: Text(
             'No birthdays in $monthLabel',
             style: TextStyle(
-              color: AppColors.foreground.withValues(alpha: 0.4),
+              color: AppColors.fg(context).withValues(alpha: 0.4),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -60,7 +60,7 @@ class MonthSummary extends StatelessWidget {
               '${dob.day} $monthLabel${age != null ? ' · Turning $age' : ''}',
               style: TextStyle(
                 fontSize: 12,
-                color: AppColors.foreground.withValues(alpha: 0.5),
+                color: AppColors.fg(context).withValues(alpha: 0.5),
               ),
             ),
             onTap: () => context.push('/people/${person.id}'),

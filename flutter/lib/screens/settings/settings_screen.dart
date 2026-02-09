@@ -120,9 +120,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.mint.withValues(alpha: 0.2),
+              color: AppColors.mn(context).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.mint),
+              border: Border.all(color: AppColors.mn(context)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,7 +135,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   'Gift suggestions will be tailored to your country.',
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.foreground.withValues(alpha: 0.5),
+                    color: AppColors.fg(context).withValues(alpha: 0.5),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -168,9 +168,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.lavender.withValues(alpha: 0.2),
+              color: AppColors.lav(context).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.lavender),
+              border: Border.all(color: AppColors.lav(context)),
             ),
             child: Column(
               children: [
@@ -197,9 +197,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.mint.withValues(alpha: 0.2),
+                color: AppColors.mn(context).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.mint),
+                border: Border.all(color: AppColors.mn(context)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,7 +212,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     'These apply to all people unless overridden individually.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.foreground.withValues(alpha: 0.5),
+                      color: AppColors.fg(context).withValues(alpha: 0.5),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -260,12 +260,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onPressed:
                   _saving || (_enabled && _timings.isEmpty) ? null : _save,
               child: _saving
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                       ),
                     )
                   : _saved

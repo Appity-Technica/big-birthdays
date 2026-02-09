@@ -92,7 +92,7 @@ class PersonDetailScreen extends ConsumerWidget {
             child: Text(
               formatDate(person.dateOfBirth),
               style: TextStyle(
-                  color: AppColors.foreground.withValues(alpha: 0.5),
+                  color: AppColors.fg(context).withValues(alpha: 0.5),
                   fontSize: 13),
             ),
           ),
@@ -101,9 +101,9 @@ class PersonDetailScreen extends ConsumerWidget {
           // Connection
           if (person.connectedThrough != null &&
               person.connectedThrough!.isNotEmpty)
-            _section(
+            _section(context,
               'Connection',
-              color: AppColors.lavender,
+              color: AppColors.lav(context),
               child: Wrap(
                 spacing: 6,
                 children: [
@@ -122,9 +122,9 @@ class PersonDetailScreen extends ConsumerWidget {
 
           // Parties
           if (person.parties != null && person.parties!.isNotEmpty)
-            _section(
+            _section(context,
               'Parties',
-              color: AppColors.mint,
+              color: AppColors.mn(context),
               child: Column(
                 children: person.parties!
                     .map((p) => Padding(
@@ -149,7 +149,7 @@ class PersonDetailScreen extends ConsumerWidget {
                                         'Invited: ${p.invitedNames!.join(', ')}',
                                         style: TextStyle(
                                             fontSize: 12,
-                                            color: AppColors.foreground
+                                            color: AppColors.fg(context)
                                                 .withValues(alpha: 0.6)),
                                       ),
                                     if (p.notes != null)
@@ -168,18 +168,18 @@ class PersonDetailScreen extends ConsumerWidget {
 
           // Notes
           if (person.notes != null && person.notes!.isNotEmpty)
-            _section(
+            _section(context,
               'Notes',
-              color: AppColors.lavender,
+              color: AppColors.lav(context),
               child:
                   Text(person.notes!, style: const TextStyle(fontSize: 13)),
             ),
 
           // Interests
           if (person.interests != null && person.interests!.isNotEmpty)
-            _section(
+            _section(context,
               'Interests',
-              color: AppColors.mint,
+              color: AppColors.mn(context),
               child: Wrap(
                 spacing: 6,
                 runSpacing: 6,
@@ -191,7 +191,7 @@ class PersonDetailScreen extends ConsumerWidget {
 
           // Gift Ideas
           if (person.giftIdeas != null && person.giftIdeas!.isNotEmpty)
-            _section(
+            _section(context,
               'Gift Ideas',
               color: AppColors.yellowLight,
               child: Wrap(
@@ -205,7 +205,7 @@ class PersonDetailScreen extends ConsumerWidget {
 
           // Past Gifts
           if (person.pastGifts != null && person.pastGifts!.isNotEmpty)
-            _section(
+            _section(context,
               'Past Gifts',
               color: AppColors.pinkLight,
               child: Column(
@@ -246,7 +246,7 @@ class PersonDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _section(String title,
+  Widget _section(BuildContext context, String title,
       {required Color color, required Widget child}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -266,7 +266,7 @@ class PersonDetailScreen extends ConsumerWidget {
               style: GoogleFonts.baloo2(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.foreground,
+                color: AppColors.fg(context),
               ),
             ),
             const SizedBox(height: 8),

@@ -43,7 +43,7 @@ class GiftResultsScreen extends ConsumerWidget {
                 'This may take a moment',
                 style: TextStyle(
                   fontSize: 13,
-                  color: AppColors.foreground.withValues(alpha: 0.5),
+                  color: AppColors.fg(context).withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -64,7 +64,7 @@ class GiftResultsScreen extends ConsumerWidget {
                   style: GoogleFonts.baloo2(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.foreground,
+                    color: AppColors.fg(context),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -73,7 +73,7 @@ class GiftResultsScreen extends ConsumerWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,
-                    color: AppColors.foreground.withValues(alpha: 0.6),
+                    color: AppColors.fg(context).withValues(alpha: 0.6),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -119,8 +119,8 @@ class GiftResultsScreen extends ConsumerWidget {
                 final index = entry.key;
                 final gift = entry.value;
                 final colors = [
-                  AppColors.mint,
-                  AppColors.lavender,
+                  AppColors.mn(context),
+                  AppColors.lav(context),
                   AppColors.yellowLight,
                 ];
                 final accentColors = [
@@ -155,7 +155,7 @@ class GiftResultsScreen extends ConsumerWidget {
                                 style: GoogleFonts.baloo2(
                                   fontSize: 17,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.foreground,
+                                  color: AppColors.fg(context),
                                 ),
                               ),
                             ),
@@ -167,7 +167,7 @@ class GiftResultsScreen extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: 13,
                             color:
-                                AppColors.foreground.withValues(alpha: 0.7),
+                                AppColors.fg(context).withValues(alpha: 0.7),
                             height: 1.4,
                           ),
                         ),

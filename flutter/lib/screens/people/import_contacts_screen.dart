@@ -119,7 +119,7 @@ class _ImportContactsScreenState extends ConsumerState<ImportContactsScreen> {
               'Find contacts with birthdays and add them to your list.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: AppColors.foreground.withValues(alpha: 0.5)),
+                  color: AppColors.fg(context).withValues(alpha: 0.5)),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
@@ -147,7 +147,7 @@ class _ImportContactsScreenState extends ConsumerState<ImportContactsScreen> {
                 '${_contacts.length} contacts found · ${_selected.length} selected',
                 style: TextStyle(
                   fontSize: 13,
-                  color: AppColors.foreground.withValues(alpha: 0.5),
+                  color: AppColors.fg(context).withValues(alpha: 0.5),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -217,7 +217,7 @@ class _ImportContactsScreenState extends ConsumerState<ImportContactsScreen> {
                   formatDate(contact.dateOfBirth),
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.foreground.withValues(alpha: 0.5),
+                    color: AppColors.fg(context).withValues(alpha: 0.5),
                   ),
                 ),
                 activeColor: AppColors.purple,

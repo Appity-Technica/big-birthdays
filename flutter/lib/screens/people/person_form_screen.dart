@@ -311,7 +311,7 @@ class _PersonFormScreenState extends ConsumerState<PersonFormScreen> {
                   selectedColor: AppColors.purple.withValues(alpha: 0.15),
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: selected ? AppColors.purple : AppColors.foreground,
+                    color: selected ? AppColors.purple : AppColors.fg(context),
                   ),
                 );
               }).toList(),
@@ -320,7 +320,7 @@ class _PersonFormScreenState extends ConsumerState<PersonFormScreen> {
 
             // Connection section
             _sectionContainer(
-              color: AppColors.lavender,
+              color: AppColors.lav(context),
               title: 'How do you know them?',
               children: [
                 TextFormField(
@@ -333,7 +333,7 @@ class _PersonFormScreenState extends ConsumerState<PersonFormScreen> {
                     style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.foreground.withValues(alpha: 0.6))),
+                        color: AppColors.fg(context).withValues(alpha: 0.6))),
                 const SizedBox(height: 6),
                 Wrap(
                   spacing: 8,
@@ -350,7 +350,7 @@ class _PersonFormScreenState extends ConsumerState<PersonFormScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color:
-                            selected ? AppColors.teal : AppColors.foreground,
+                            selected ? AppColors.teal : AppColors.fg(context),
                       ),
                     );
                   }).toList(),
@@ -368,7 +368,7 @@ class _PersonFormScreenState extends ConsumerState<PersonFormScreen> {
 
             // Parties
             _sectionContainer(
-              color: AppColors.mint,
+              color: AppColors.mn(context),
               title: 'Parties',
               children: [
                 ..._parties.asMap().entries.map((entry) {
@@ -517,7 +517,7 @@ class _PersonFormScreenState extends ConsumerState<PersonFormScreen> {
                                 Text('Rating',
                                     style: TextStyle(
                                         fontSize: 11,
-                                        color: AppColors.foreground
+                                        color: AppColors.fg(context)
                                             .withValues(alpha: 0.5))),
                                 StarRating(
                                   rating: g.rating,
@@ -595,12 +595,12 @@ class _PersonFormScreenState extends ConsumerState<PersonFormScreen> {
               child: ElevatedButton(
                 onPressed: _saving ? null : _save,
                 child: _saving
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                       )
                     : Text(_isEdit ? 'Save Changes' : 'Add Birthday'),
@@ -632,7 +632,7 @@ class _PersonFormScreenState extends ConsumerState<PersonFormScreen> {
               style: GoogleFonts.baloo2(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.foreground)),
+                  color: AppColors.fg(context))),
           const SizedBox(height: 8),
           ...children,
         ],

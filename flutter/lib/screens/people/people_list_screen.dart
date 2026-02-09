@@ -84,7 +84,7 @@ class _PeopleListScreenState extends ConsumerState<PeopleListScreen> {
                       '${filtered.length} ${filtered.length == 1 ? 'person' : 'people'}',
                       style: TextStyle(
                         fontSize: 13,
-                        color: AppColors.foreground.withValues(alpha: 0.5),
+                        color: AppColors.fg(context).withValues(alpha: 0.5),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -103,15 +103,15 @@ class _PeopleListScreenState extends ConsumerState<PeopleListScreen> {
                           'No people found.',
                           style: TextStyle(
                             color:
-                                AppColors.foreground.withValues(alpha: 0.4),
+                                AppColors.fg(context).withValues(alpha: 0.4),
                           ),
                         ),
                       )
                     : ListView.separated(
                         itemCount: filtered.length,
-                        separatorBuilder: (_, _) => Divider(
+                        separatorBuilder: (context, _) => Divider(
                           height: 1,
-                          color: AppColors.lavender.withValues(alpha: 0.5),
+                          color: AppColors.lav(context).withValues(alpha: 0.5),
                         ),
                         itemBuilder: (context, index) {
                           final person = filtered[index];

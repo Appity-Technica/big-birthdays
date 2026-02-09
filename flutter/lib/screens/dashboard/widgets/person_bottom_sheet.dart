@@ -34,9 +34,9 @@ class PersonBottomSheet extends StatelessWidget {
       maxChildSize: 0.95,
       builder: (_, controller) {
         return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: ListView(
             controller: controller,
@@ -47,7 +47,7 @@ class PersonBottomSheet extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.lavender,
+                    color: AppColors.lav(context),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -103,7 +103,7 @@ class PersonBottomSheet extends StatelessWidget {
                     formatDate(person.dateOfBirth),
                     style: TextStyle(
                       fontSize: 13,
-                      color: AppColors.foreground.withValues(alpha: 0.5),
+                      color: AppColors.fg(context).withValues(alpha: 0.5),
                     ),
                   ),
                 ),
@@ -113,7 +113,7 @@ class PersonBottomSheet extends StatelessWidget {
               // Connection
               if (person.connectedThrough != null &&
                   person.connectedThrough!.isNotEmpty) ...[
-                _sectionTitle('Connection'),
+                _sectionTitle(context, 'Connection'),
                 Wrap(
                   spacing: 6,
                   children: [
@@ -133,11 +133,11 @@ class PersonBottomSheet extends StatelessWidget {
 
               // Notes
               if (person.notes != null && person.notes!.isNotEmpty) ...[
-                _sectionTitle('Notes'),
+                _sectionTitle(context, 'Notes'),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.lavender.withValues(alpha: 0.3),
+                    color: AppColors.lav(context).withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(person.notes!,
@@ -149,7 +149,7 @@ class PersonBottomSheet extends StatelessWidget {
               // Interests
               if (person.interests != null &&
                   person.interests!.isNotEmpty) ...[
-                _sectionTitle('Interests'),
+                _sectionTitle(context, 'Interests'),
                 Wrap(
                   spacing: 6,
                   runSpacing: 6,
@@ -163,7 +163,7 @@ class PersonBottomSheet extends StatelessWidget {
               // Gift Ideas
               if (person.giftIdeas != null &&
                   person.giftIdeas!.isNotEmpty) ...[
-                _sectionTitle('Gift Ideas'),
+                _sectionTitle(context, 'Gift Ideas'),
                 Wrap(
                   spacing: 6,
                   runSpacing: 6,
@@ -178,7 +178,7 @@ class PersonBottomSheet extends StatelessWidget {
               // Past Gifts
               if (person.pastGifts != null &&
                   person.pastGifts!.isNotEmpty) ...[
-                _sectionTitle('Past Gifts'),
+                _sectionTitle(context, 'Past Gifts'),
                 ...person.pastGifts!.map((g) => Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Container(
@@ -263,7 +263,7 @@ class PersonBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _sectionTitle(String title) {
+  Widget _sectionTitle(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
@@ -271,7 +271,7 @@ class PersonBottomSheet extends StatelessWidget {
         style: GoogleFonts.baloo2(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: AppColors.foreground,
+          color: AppColors.fg(context),
         ),
       ),
     );

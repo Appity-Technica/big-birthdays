@@ -96,7 +96,7 @@ function BirthdayTodayCard({ person, onClick }: { person: Person; onClick: () =>
   return (
     <button onClick={onClick} className="w-full text-left cursor-pointer">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple via-pink to-coral p-1">
-        <div className="relative overflow-hidden rounded-[22px] bg-white p-6 sm:p-8">
+        <div className="relative overflow-hidden rounded-[22px] bg-surface p-6 sm:p-8">
           <Confetti />
           <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
             <div className="relative">
@@ -145,7 +145,7 @@ function UpcomingCard({ person, index, onClick }: { person: Person; index: numbe
   return (
     <button
       onClick={onClick}
-      className="group relative rounded-2xl bg-white border-2 border-lavender hover:border-purple/30 transition-all duration-300 hover:shadow-xl hover:shadow-purple/8 hover:-translate-y-1 w-full text-left cursor-pointer"
+      className="group relative rounded-2xl bg-surface border-2 border-lavender hover:border-purple/30 transition-all duration-300 hover:shadow-xl hover:shadow-purple/8 hover:-translate-y-1 w-full text-left cursor-pointer"
       style={{ animationDelay: `${index * 80}ms` }}
     >
       <div className="absolute top-0 right-0 w-20 h-20 opacity-[0.04] pointer-events-none">
@@ -203,7 +203,7 @@ function PersonSheet({ person, onClose }: { person: Person; onClose: () => void 
       />
 
       {/* Sheet */}
-      <div className="relative w-full sm:max-w-lg sm:mx-4 max-h-[85vh] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-[slide-up_300ms_ease-out] overflow-hidden flex flex-col">
+      <div className="relative w-full sm:max-w-lg sm:mx-4 max-h-[85vh] bg-surface rounded-t-3xl sm:rounded-3xl shadow-2xl animate-[slide-up_300ms_ease-out] overflow-hidden flex flex-col">
         {/* Drag handle (mobile) */}
         <div className="flex justify-center pt-3 pb-1 sm:hidden">
           <div className="w-10 h-1 rounded-full bg-foreground/20" />
@@ -314,7 +314,7 @@ function PersonSheet({ person, onClose }: { person: Person; onClose: () => void 
               <h3 className="text-xs font-bold text-pink mb-2">Past Gifts</h3>
               <div className="space-y-1.5">
                 {person.pastGifts.map((gift, i) => (
-                  <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-white/70">
+                  <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-surface/70">
                     <span className="px-2 py-0.5 rounded-full bg-pink/10 text-pink text-xs font-bold tabular-nums shrink-0">
                       {gift.year}
                     </span>
@@ -358,7 +358,7 @@ function PersonSheet({ person, onClose }: { person: Person; onClose: () => void 
 
 function EmptyState() {
   return (
-    <div className="relative overflow-hidden rounded-3xl border-2 border-dashed border-lavender bg-gradient-to-br from-lavender/30 via-white to-mint/30 p-10 sm:p-16 text-center">
+    <div className="relative overflow-hidden rounded-3xl border-2 border-dashed border-lavender bg-gradient-to-br from-lavender/30 via-background to-mint/30 p-10 sm:p-16 text-center">
       <div className="absolute top-6 left-8 text-5xl opacity-20 rotate-[-15deg]">🎈</div>
       <div className="absolute bottom-8 right-10 text-4xl opacity-20 rotate-12">🎁</div>
       <div className="absolute top-12 right-16 text-3xl opacity-15 rotate-6">🎂</div>
@@ -435,7 +435,7 @@ export default function Home() {
       `}</style>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-lavender/40 via-white to-white pt-8 pb-12 sm:pt-12 sm:pb-16">
+      <section className="relative overflow-hidden bg-gradient-to-b from-lavender/40 via-background to-background pt-8 pb-12 sm:pt-12 sm:pb-16">
         {/* Decorative shapes */}
         <div className="absolute top-0 right-0 w-72 h-72 bg-pink/5 rounded-full -translate-y-1/3 translate-x-1/3" />
         <div className="absolute bottom-0 left-0 w-56 h-56 bg-teal/5 rounded-full translate-y-1/3 -translate-x-1/4" />
@@ -448,13 +448,16 @@ export default function Home() {
           <div className="animate-fade-up">
             {/* Logo - mobile only */}
             <div className="flex justify-center mb-6 sm:hidden">
-              <Image
-                src="/logo.png"
-                alt="Tiaras & Trains"
-                width={256}
-                height={256}
-                className="w-40 h-40 rounded-3xl border-3 border-purple shadow-lg shadow-purple/20"
-              />
+              <picture>
+                <source srcSet="/logo_dark.png" media="(prefers-color-scheme: dark)" />
+                <Image
+                  src="/logo.png"
+                  alt="Tiaras & Trains"
+                  width={256}
+                  height={256}
+                  className="w-40 h-40 rounded-3xl border-3 border-purple shadow-lg shadow-purple/20"
+                />
+              </picture>
             </div>
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-purple leading-tight text-center sm:text-left">
               Tiaras &amp;{' '}
@@ -480,7 +483,7 @@ export default function Home() {
             </Link>
             <Link
               href="/calendar"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-purple border-2 border-purple/20 rounded-full font-bold text-sm hover:border-purple/40 hover:bg-lavender/30 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-surface text-purple border-2 border-purple/20 rounded-full font-bold text-sm hover:border-purple/40 hover:bg-lavender/30 transition-all"
             >
               <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
@@ -492,7 +495,7 @@ export default function Home() {
           {/* Stats row */}
           {people.length > 0 && (
             <div className="flex flex-wrap gap-4 mt-10 animate-fade-up" style={{ animationDelay: '300ms' }}>
-              <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-white border border-lavender shadow-sm">
+              <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-surface border border-lavender shadow-sm">
                 <div className="w-8 h-8 rounded-lg bg-purple/10 flex items-center justify-center text-sm">🎂</div>
                 <div>
                   <p className="text-xs text-foreground/50 font-semibold">Tracking</p>
@@ -500,7 +503,7 @@ export default function Home() {
                 </div>
               </div>
               {todayBirthdays.length > 0 && (
-                <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-white border border-lavender shadow-sm">
+                <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-surface border border-lavender shadow-sm">
                   <div className="w-8 h-8 rounded-lg bg-coral/10 flex items-center justify-center text-sm">🎉</div>
                   <div>
                     <p className="text-xs text-foreground/50 font-semibold">Today</p>
@@ -509,7 +512,7 @@ export default function Home() {
                 </div>
               )}
               {upcoming.length > 0 && (
-                <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-white border border-lavender shadow-sm">
+                <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-surface border border-lavender shadow-sm">
                   <div className="w-8 h-8 rounded-lg bg-teal/10 flex items-center justify-center text-sm">🗓</div>
                   <div>
                     <p className="text-xs text-foreground/50 font-semibold">Next up</p>

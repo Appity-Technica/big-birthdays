@@ -192,7 +192,7 @@ class DashboardScreen extends ConsumerWidget {
             Text(
               'Add your first birthday to get started.',
               style: TextStyle(
-                color: AppColors.foreground.withValues(alpha: 0.5),
+                color: AppColors.fg(context).withValues(alpha: 0.5),
               ),
               textAlign: TextAlign.center,
             ),

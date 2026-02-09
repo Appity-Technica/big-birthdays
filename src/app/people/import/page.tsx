@@ -150,7 +150,7 @@ export default function ImportContactsPage() {
             <button
               onClick={handleGoogleFetch}
               disabled={loading}
-              className="group flex flex-col items-center gap-4 p-8 rounded-2xl border-2 border-lavender hover:border-purple/30 bg-white transition-all hover:shadow-lg hover:shadow-purple/5 text-center disabled:opacity-50"
+              className="group flex flex-col items-center gap-4 p-8 rounded-2xl border-2 border-lavender hover:border-purple/30 bg-surface transition-all hover:shadow-lg hover:shadow-purple/5 text-center disabled:opacity-50"
             >
               <div className="w-16 h-16 rounded-full bg-lavender group-hover:bg-purple/10 flex items-center justify-center transition-colors">
                 {loading ? (
@@ -175,7 +175,7 @@ export default function ImportContactsPage() {
             {/* CSV / JSON card */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="group flex flex-col items-center gap-4 p-8 rounded-2xl border-2 border-lavender hover:border-teal/30 bg-white transition-all hover:shadow-lg hover:shadow-teal/5 text-center"
+              className="group flex flex-col items-center gap-4 p-8 rounded-2xl border-2 border-lavender hover:border-teal/30 bg-surface transition-all hover:shadow-lg hover:shadow-teal/5 text-center"
             >
               <div className="w-16 h-16 rounded-full bg-mint group-hover:bg-teal/10 flex items-center justify-center transition-colors">
                 <svg className="w-8 h-8 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -197,7 +197,7 @@ export default function ImportContactsPage() {
             <div className="grid sm:grid-cols-2 gap-4 text-xs text-foreground/60">
               <div>
                 <p className="font-bold text-foreground/70 mb-1">CSV example:</p>
-                <code className="block bg-white/80 rounded-lg p-2.5 text-[11px] leading-relaxed font-mono">
+                <code className="block bg-surface/80 rounded-lg p-2.5 text-[11px] leading-relaxed font-mono">
                   Name,Date of Birth<br />
                   Alice Smith,15/03/2010<br />
                   Bob Jones,2008-07-22
@@ -205,7 +205,7 @@ export default function ImportContactsPage() {
               </div>
               <div>
                 <p className="font-bold text-foreground/70 mb-1">JSON example:</p>
-                <code className="block bg-white/80 rounded-lg p-2.5 text-[11px] leading-relaxed font-mono">
+                <code className="block bg-surface/80 rounded-lg p-2.5 text-[11px] leading-relaxed font-mono">
                   {'[{"name": "Alice Smith",'}
                   <br />
                   {'  "birthday": "15/03/2010"}]'}

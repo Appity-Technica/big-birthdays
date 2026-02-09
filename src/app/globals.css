@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #1a1a2e;
+  --surface: #ffffff;
   --purple: #7B2D8E;
   --purple-light: #9B59B6;
   --purple-dark: #5B1D6E;
@@ -16,6 +17,16 @@
   --coral: #FF6B6B;
   --lavender: #E8D5F5;
   --mint: #D0F0E8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #121218;
+    --foreground: #E8E8F0;
+    --surface: #1C1C24;
+    --lavender: #3D2A4D;
+    --mint: #1A3028;
+  }
 }
 
 @theme inline {
@@ -34,6 +45,7 @@
   --color-coral: var(--coral);
   --color-lavender: var(--lavender);
   --color-mint: var(--mint);
+  --color-surface: var(--surface);
   --font-sans: var(--font-nunito);
   --font-display: var(--font-baloo);
 }

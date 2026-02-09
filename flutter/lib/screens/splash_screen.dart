@@ -48,55 +48,60 @@ class _SplashScreenState extends State<SplashScreen>
         if (_showSplash)
           FadeTransition(
             opacity: ReverseAnimation(_fadeOut),
-            child: Container(
-              color: AppColors.background,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(32),
-                        border: Border.all(color: AppColors.purple, width: 3),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.purple.withValues(alpha: 0.2),
-                            blurRadius: 30,
-                            spreadRadius: 5,
+            child: Builder(
+              builder: (context) {
+                final isDark = Theme.of(context).brightness == Brightness.dark;
+                return Container(
+                  color: AppColors.bg(context),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(32),
+                            border: Border.all(color: AppColors.purple, width: 3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.purple.withValues(alpha: 0.2),
+                                blurRadius: 30,
+                                spreadRadius: 5,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(29),
-                        child: Image.asset(
-                          'assets/logo.png',
-                          width: 200,
-                          height: 200,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(29),
+                            child: Image.asset(
+                              isDark ? 'assets/logo_dark.png' : 'assets/logo.png',
+                              width: 200,
+                              height: 200,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Tiaras & Trains',
-                      style: GoogleFonts.baloo2(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.purple,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Birthday Tracker',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.foreground.withValues(alpha: 0.4),
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
+                        const SizedBox(height: 24),
+                        Text(
+                          'Tiaras & Trains',
+                          style: GoogleFonts.baloo2(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.purple,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Birthday Tracker',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.fg(context).withValues(alpha: 0.4),
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
                   ],
                 ),
               ),
+                );
+              },
             ),
           ),
       ],

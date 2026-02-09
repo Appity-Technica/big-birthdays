@@ -18,11 +18,14 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-lavender">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-lavender">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between py-2">
           <Link href="/" className="flex items-center">
-            <Image src="/logo.png" alt="Tiaras & Trains" width={256} height={256} className="w-32 h-32 rounded-3xl border-3 border-purple" />
+            <picture>
+              <source srcSet="/logo_dark.png" media="(prefers-color-scheme: dark)" />
+              <Image src="/logo.png" alt="Tiaras & Trains" width={256} height={256} className="w-32 h-32 rounded-3xl border-3 border-purple" />
+            </picture>
           </Link>
           <div className="flex items-center gap-1">
             {links.map((link) => (

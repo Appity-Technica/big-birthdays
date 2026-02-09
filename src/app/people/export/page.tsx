@@ -125,7 +125,7 @@ export default function ExportPeoplePage() {
               {/* CSV card */}
               <button
                 onClick={() => handleFormatSelect('csv')}
-                className="group flex flex-col items-center gap-4 p-8 rounded-2xl border-2 border-lavender hover:border-purple/30 bg-white transition-all hover:shadow-lg hover:shadow-purple/5 text-center"
+                className="group flex flex-col items-center gap-4 p-8 rounded-2xl border-2 border-lavender hover:border-purple/30 bg-surface transition-all hover:shadow-lg hover:shadow-purple/5 text-center"
               >
                 <div className="w-16 h-16 rounded-full bg-lavender group-hover:bg-purple/10 flex items-center justify-center transition-colors">
                   <svg className="w-8 h-8 text-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -143,7 +143,7 @@ export default function ExportPeoplePage() {
               {/* JSON card */}
               <button
                 onClick={() => handleFormatSelect('json')}
-                className="group flex flex-col items-center gap-4 p-8 rounded-2xl border-2 border-lavender hover:border-teal/30 bg-white transition-all hover:shadow-lg hover:shadow-teal/5 text-center"
+                className="group flex flex-col items-center gap-4 p-8 rounded-2xl border-2 border-lavender hover:border-teal/30 bg-surface transition-all hover:shadow-lg hover:shadow-teal/5 text-center"
               >
                 <div className="w-16 h-16 rounded-full bg-mint group-hover:bg-teal/10 flex items-center justify-center transition-colors">
                   <svg className="w-8 h-8 text-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

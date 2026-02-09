@@ -18,8 +18,9 @@ class RelationshipFilterChips extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          _chip('All', selected == null, () => onChanged(null)),
+          _chip(context, 'All', selected == null, () => onChanged(null)),
           ...Relationship.values.map((r) => _chip(
+                context,
                 r.displayLabel,
                 selected == r,
                 () => onChanged(r),
@@ -29,7 +30,7 @@ class RelationshipFilterChips extends StatelessWidget {
     );
   }
 
-  Widget _chip(String label, bool isSelected, VoidCallback onTap) {
+  Widget _chip(BuildContext context, String label, bool isSelected, VoidCallback onTap) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: FilterChip(
@@ -40,11 +41,11 @@ class RelationshipFilterChips extends StatelessWidget {
         checkmarkColor: AppColors.purple,
         labelStyle: TextStyle(
           fontWeight: FontWeight.w600,
-          color: isSelected ? AppColors.purple : AppColors.foreground,
+          color: isSelected ? AppColors.purple : AppColors.fg(context),
           fontSize: 13,
         ),
         side: BorderSide(
-          color: isSelected ? AppColors.purple : AppColors.lavender,
+          color: isSelected ? AppColors.purple : AppColors.lav(context),
         ),
       ),
     );
@@ -63,16 +64,16 @@ class SortToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _button('Upcoming', mode == SortMode.upcoming,
+        _button(context, 'Upcoming', mode == SortMode.upcoming,
             () => onChanged(SortMode.upcoming)),
         const SizedBox(width: 8),
-        _button('A-Z', mode == SortMode.alphabetical,
+        _button(context, 'A-Z', mode == SortMode.alphabetical,
             () => onChanged(SortMode.alphabetical)),
       ],
     );
   }
 
-  Widget _button(String label, bool isSelected, VoidCallback onTap) {
+  Widget _button(BuildContext context, String label, bool isSelected, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -80,7 +81,7 @@ class SortToggle extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.purple
-              : AppColors.lavender.withValues(alpha: 0.4),
+              : AppColors.lav(context).withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -88,7 +89,7 @@ class SortToggle extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: isSelected ? Colors.white : AppColors.foreground,
+            color: isSelected ? Colors.white : AppColors.fg(context),
           ),
         ),
       ),
