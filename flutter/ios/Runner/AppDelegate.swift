@@ -3,15 +3,20 @@ import UIKit
 import Contacts
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    let controller = window?.rootViewController as! FlutterViewController
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+
     let contactsChannel = FlutterMethodChannel(
       name: "com.appitytechnica.bigbirthdays/contacts",
-      binaryMessenger: controller.binaryMessenger
+      binaryMessenger: engineBridge.applicationRegistrar.messenger()
     )
 
     contactsChannel.setMethodCallHandler { [weak self] (call, result) in
@@ -21,9 +26,6 @@ import Contacts
         result(FlutterMethodNotImplemented)
       }
     }
-
-    GeneratedPluginRegistrant.register(with: self)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
   private func getContactsWithBirthdays(result: @escaping FlutterResult) {
