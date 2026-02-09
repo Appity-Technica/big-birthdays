@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
-import { getNotificationSettings, saveNotificationSettings } from '@/lib/db';
-import { NotificationTiming, NotificationSettings } from '@/types';
+import { getNotificationSettings, saveNotificationSettings, getPreferences, savePreferences } from '@/lib/db';
+import { NotificationTiming, NotificationSettings, CountryCode, SUPPORTED_COUNTRIES } from '@/types';
 
 const TIMING_OPTIONS: { value: NotificationTiming; label: string }[] = [
   { value: 'on-the-day', label: 'On the day' },
@@ -18,6 +18,7 @@ export default function SettingsPage() {
   const { user, loading: authLoading } = useAuth();
   const [enabled, setEnabled] = useState(false);
   const [timings, setTimings] = useState<NotificationTiming[]>(['on-the-day', '1-day']);
+  const [country, setCountry] = useState<CountryCode>('AU');
   const [fcmToken, setFcmToken] = useState<string | undefined>();
   const [permissionState, setPermissionState] = useState<NotificationPermission | 'unsupported'>('default');
   const [loading, setLoading] = useState(true);
@@ -34,11 +35,17 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!user) return;
-    getNotificationSettings(user.uid).then((settings) => {
-      if (settings) {
-        setEnabled(settings.enabled);
-        setTimings(settings.defaultTimings);
-        setFcmToken(settings.fcmToken);
+    Promise.all([
+      getNotificationSettings(user.uid),
+      getPreferences(user.uid),
+    ]).then(([notifSettings, prefs]) => {
+      if (notifSettings) {
+        setEnabled(notifSettings.enabled);
+        setTimings(notifSettings.defaultTimings);
+        setFcmToken(notifSettings.fcmToken);
+      }
+      if (prefs) {
+        setCountry(prefs.country);
       }
       setLoading(false);
     });
@@ -75,7 +82,10 @@ export default function SettingsPage() {
       defaultTimings: timings,
       fcmToken,
     };
-    await saveNotificationSettings(user.uid, settings);
+    await Promise.all([
+      saveNotificationSettings(user.uid, settings),
+      savePreferences(user.uid, { country }),
+    ]);
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -114,9 +124,24 @@ export default function SettingsPage() {
       </Link>
 
       <h1 className="font-display text-3xl sm:text-4xl font-bold text-purple mb-2">Settings</h1>
-      <p className="text-foreground/50 mb-8">Manage your notification preferences.</p>
+      <p className="text-foreground/50 mb-8">Manage your preferences.</p>
 
       <div className="space-y-6">
+        {/* Country */}
+        <div className="p-5 rounded-2xl bg-mint/20 border border-mint">
+          <h2 className="text-sm font-bold text-foreground mb-1">Country</h2>
+          <p className="text-xs text-foreground/50 mb-3">Used for gift suggestions and currency</p>
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value as CountryCode)}
+            className="w-full sm:w-64 px-4 py-2.5 rounded-xl bg-surface border border-mint text-sm font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-teal/30"
+          >
+            {Object.entries(SUPPORTED_COUNTRIES).map(([code, name]) => (
+              <option key={code} value={code}>{name}</option>
+            ))}
+          </select>
+        </div>
+
         {/* Notification toggle */}
         <div className="p-5 rounded-2xl bg-lavender/20 border border-lavender">
           <div className="flex items-center justify-between">

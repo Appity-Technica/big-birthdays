@@ -48,3 +48,31 @@ export interface Person {
   createdAt: string;
   updatedAt: string;
 }
+
+// --- Country & Preferences ---
+
+export type CountryCode = 'AU' | 'GB' | 'US' | 'CA' | 'IE' | 'NZ' | 'ZA' | 'IN';
+
+export const SUPPORTED_COUNTRIES: Record<CountryCode, string> = {
+  AU: 'Australia',
+  GB: 'United Kingdom',
+  US: 'United States',
+  CA: 'Canada',
+  IE: 'Ireland',
+  NZ: 'New Zealand',
+  ZA: 'South Africa',
+  IN: 'India',
+};
+
+export interface UserPreferences {
+  country: CountryCode;
+}
+
+// --- Gift Suggestions ---
+
+export interface GiftSuggestion {
+  name: string;
+  description: string;
+  estimatedPrice: string;
+  purchaseUrl: string;
+}

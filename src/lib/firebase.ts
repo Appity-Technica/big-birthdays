@@ -1,6 +1,7 @@
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getFunctions as _getFunctions, type Functions } from 'firebase/functions';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -14,6 +15,7 @@ const firebaseConfig = {
 let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
+let functions: Functions;
 
 // Only initialise Firebase when the config is actually available.
 // During SSR prerendering the env vars may be empty strings.
@@ -21,7 +23,8 @@ if (firebaseConfig.apiKey) {
   app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
   auth = getAuth(app);
   db = getFirestore(app);
+  functions = _getFunctions(app, 'europe-west2');
 }
 
-export { auth, db };
+export { auth, db, functions };
 export default app!;

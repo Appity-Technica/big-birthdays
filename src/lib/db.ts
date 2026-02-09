@@ -12,7 +12,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Person, NotificationSettings } from '@/types';
+import { Person, NotificationSettings, UserPreferences } from '@/types';
 import { generateId } from './utils';
 
 function peopleCollection(userId: string) {
@@ -87,6 +87,22 @@ export async function getNotificationSettings(userId: string): Promise<Notificat
 
 export async function saveNotificationSettings(userId: string, settings: NotificationSettings): Promise<void> {
   await setDoc(notificationSettingsDoc(userId), stripUndefined(settings as unknown as Record<string, unknown>));
+}
+
+// --- User Preferences ---
+
+function preferencesDoc(userId: string) {
+  return doc(db, 'users', userId, 'settings', 'preferences');
+}
+
+export async function getPreferences(userId: string): Promise<UserPreferences | null> {
+  const snapshot = await getDoc(preferencesDoc(userId));
+  if (!snapshot.exists()) return null;
+  return snapshot.data() as UserPreferences;
+}
+
+export async function savePreferences(userId: string, prefs: UserPreferences): Promise<void> {
+  await setDoc(preferencesDoc(userId), prefs);
 }
 
 /**
