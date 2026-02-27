@@ -23,7 +23,43 @@ class DashboardScreen extends ConsumerWidget {
     return Scaffold(
       body: peopleAsync.when(
         loading: () => const LoadingSpinner(),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.cloud_off,
+                    size: 48,
+                    color: AppColors.coral.withValues(alpha: 0.7)),
+                const SizedBox(height: 16),
+                Text(
+                  'Unable to load birthdays',
+                  style: GoogleFonts.baloo2(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.fg(context),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Check your internet connection and try again.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.fg(context).withValues(alpha: 0.6),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: () => ref.invalidate(peopleStreamProvider),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+        ),
         data: (people) {
           if (people.isEmpty) {
             return _emptyState(context);
@@ -51,6 +87,7 @@ class DashboardScreen extends ConsumerWidget {
                           'assets/logo.png',
                           width: 48,
                           height: 48,
+                          semanticLabel: 'Tiaras & Trains logo',
                         ),
                       ),
                     ),
@@ -176,6 +213,7 @@ class DashboardScreen extends ConsumerWidget {
                   'assets/logo.png',
                   width: 120,
                   height: 120,
+                  excludeFromSemantics: true,
                 ),
               ),
             ),

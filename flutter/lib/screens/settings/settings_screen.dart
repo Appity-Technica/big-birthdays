@@ -140,7 +140,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: _country,
+                  initialValue: _country,
                   onChanged: (value) {
                     if (value != null) setState(() => _country = value);
                   },

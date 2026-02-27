@@ -16,9 +16,16 @@ class BirthdayTodayCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final age = getUpcomingAge(person.dateOfBirth);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    final semanticLabel = age != null
+        ? "${person.name}'s birthday today, turning $age"
+        : "${person.name}'s birthday today";
+
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
@@ -70,10 +77,13 @@ class BirthdayTodayCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Text('🎂', style: TextStyle(fontSize: 32)),
+              const ExcludeSemantics(
+                child: Text('🎂', style: TextStyle(fontSize: 32)),
+              ),
             ],
           ),
         ),
+      ),
       ),
     );
   }

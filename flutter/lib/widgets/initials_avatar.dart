@@ -21,20 +21,24 @@ class InitialsAvatar extends StatelessWidget {
     final idx = colorIndex ?? name.hashCode;
     final color = AppColors.accentForIndex(idx);
 
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: Text(
-          initials,
-          style: GoogleFonts.baloo2(
-            fontSize: size * 0.4,
-            fontWeight: FontWeight.bold,
-            color: color,
+    return Semantics(
+      label: 'Avatar for $name',
+      excludeSemantics: true,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.15),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Text(
+            initials,
+            style: GoogleFonts.baloo2(
+              fontSize: size * 0.4,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
         ),
       ),

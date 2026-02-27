@@ -23,10 +23,17 @@ class UpcomingCard extends StatelessWidget {
     final days = daysUntilBirthday(person.dateOfBirth);
     final age = getUpcomingAge(person.dateOfBirth);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
+    final daysLabel = days == 1 ? 'tomorrow' : 'in $days days';
+    final ageLabel = age != null ? ', turning $age' : '';
+    final semanticLabel = "${person.name}'s birthday $daysLabel$ageLabel";
+
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
@@ -88,6 +95,7 @@ class UpcomingCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

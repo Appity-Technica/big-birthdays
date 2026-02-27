@@ -33,7 +33,10 @@ class StatsRow extends StatelessWidget {
 
   Widget _stat(String label, String value, Color color) {
     return Expanded(
-      child: Container(
+      child: Semantics(
+        label: '$label: $value',
+        excludeSemantics: true,
+        child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.08),
@@ -60,6 +63,7 @@ class StatsRow extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -95,6 +95,103 @@ void main() {
     });
   });
 
+  group('getNextBirthday', () {
+    test('returns today when birthday is today', () {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final dob = buildDob(1990, now.month, now.day);
+      final next = getNextBirthday(dob);
+      expect(next, today);
+    });
+
+    test('returns this year when birthday has not passed', () {
+      final now = DateTime.now();
+      // Use a date 30 days in the future
+      final future = now.add(const Duration(days: 30));
+      final dob = buildDob(1990, future.month, future.day);
+      final next = getNextBirthday(dob);
+      expect(next.year, now.year);
+      expect(next.month, future.month);
+      expect(next.day, future.day);
+    });
+
+    test('returns next year when birthday has passed', () {
+      final now = DateTime.now();
+      // Use a date 30 days in the past
+      final past = now.subtract(const Duration(days: 30));
+      final dob = buildDob(1990, past.month, past.day);
+      final next = getNextBirthday(dob);
+      // Birthday already passed, so it should be next year
+      expect(next.year, greaterThanOrEqualTo(now.year));
+      expect(next.month, past.month);
+      expect(next.day, past.day);
+      // Verify it's in the future or today
+      final today = DateTime(now.year, now.month, now.day);
+      expect(next.isAfter(today) || next.isAtSameMomentAs(today), isTrue);
+    });
+
+    test('works with unknown year', () {
+      final now = DateTime.now();
+      final dob = buildDob(null, now.month, now.day);
+      final next = getNextBirthday(dob);
+      expect(next.month, now.month);
+      expect(next.day, now.day);
+    });
+  });
+
+  group('getUpcomingAge', () {
+    test('returns null for unknown year', () {
+      expect(getUpcomingAge('0000-06-15'), isNull);
+    });
+
+    test('returns correct upcoming age when birthday is today', () {
+      final now = DateTime.now();
+      final dob = buildDob(now.year - 25, now.month, now.day);
+      expect(getUpcomingAge(dob), 25);
+    });
+
+    test('returns correct upcoming age when birthday is in the future', () {
+      final now = DateTime.now();
+      final future = now.add(const Duration(days: 30));
+      final dob = buildDob(now.year - 30, future.month, future.day);
+      expect(getUpcomingAge(dob), 30);
+    });
+
+    test('returns next years age when birthday has passed', () {
+      final now = DateTime.now();
+      final past = now.subtract(const Duration(days: 30));
+      final dob = buildDob(now.year - 20, past.month, past.day);
+      // Birthday passed this year, next birthday is next year
+      expect(getUpcomingAge(dob), 21);
+    });
+  });
+
+  group('getCurrentAge (edge cases)', () {
+    test('returns null for unknown year', () {
+      expect(getCurrentAge('0000-06-15'), isNull);
+    });
+
+    test('returns correct age for known year', () {
+      final now = DateTime.now();
+      final dob = buildDob(now.year - 30, now.month, now.day);
+      expect(getCurrentAge(dob), 30);
+    });
+
+    test('subtracts 1 when birthday has not yet occurred this year', () {
+      final now = DateTime.now();
+      final future = now.add(const Duration(days: 30));
+      final dob = buildDob(now.year - 25, future.month, future.day);
+      expect(getCurrentAge(dob), 24);
+    });
+
+    test('returns full age when birthday already passed this year', () {
+      final now = DateTime.now();
+      final past = now.subtract(const Duration(days: 30));
+      final dob = buildDob(now.year - 25, past.month, past.day);
+      expect(getCurrentAge(dob), 25);
+    });
+  });
+
   group('getInitials', () {
     test('single name', () {
       expect(getInitials('Alice'), 'A');
@@ -106,6 +203,18 @@ void main() {
 
     test('multiple names takes first two', () {
       expect(getInitials('Mary Jane Watson'), 'MJ');
+    });
+
+    test('handles leading/trailing whitespace', () {
+      expect(getInitials('  John Smith  '), 'JS');
+    });
+
+    test('handles multiple spaces between names', () {
+      expect(getInitials('John    Smith'), 'JS');
+    });
+
+    test('lowercased input returns uppercase initials', () {
+      expect(getInitials('john smith'), 'JS');
     });
   });
 }

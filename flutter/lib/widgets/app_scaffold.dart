@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../core/constants.dart';
 
@@ -22,6 +23,7 @@ class AppScaffold extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: index,
         onTap: (i) {
+          HapticFeedback.selectionClick();
           switch (i) {
             case 0:
               context.go('/');

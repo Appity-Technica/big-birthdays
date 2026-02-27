@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/analytics.dart';
 import '../models/gift_suggestion.dart';
 import '../models/person.dart';
 import '../repositories/gift_repository.dart';
@@ -17,6 +18,7 @@ class GiftSuggestionsNotifier
 
   Future<void> fetchSuggestions(Person person, {String country = 'AU'}) async {
     state = const AsyncValue.loading();
+    Analytics.logRequestGiftSuggestions();
     try {
       final repository = ref.read(giftRepositoryProvider);
       final suggestions = await repository.getGiftSuggestions(person, country: country);

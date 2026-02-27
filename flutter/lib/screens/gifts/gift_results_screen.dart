@@ -100,7 +100,55 @@ class GiftResultsScreen extends ConsumerWidget {
         ),
         data: (suggestions) {
           if (suggestions.isEmpty) {
-            return const Center(child: LoadingSpinner());
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.card_giftcard,
+                        size: 48,
+                        color: AppColors.purple.withValues(alpha: 0.5)),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No suggestions yet',
+                      style: GoogleFonts.baloo2(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.fg(context),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tap below to get AI-powered gift ideas.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColors.fg(context).withValues(alpha: 0.6),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        if (person != null) {
+                          final prefs = ref.read(userPreferencesProvider).value;
+                          final country = prefs?.country ?? 'AU';
+                          ref
+                              .read(giftSuggestionsProvider.notifier)
+                              .fetchSuggestions(person, country: country);
+                        }
+                      },
+                      icon: const Icon(Icons.auto_awesome),
+                      label: const Text('Get Gift Ideas'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.pink,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
           return ListView(
             padding: const EdgeInsets.all(20),

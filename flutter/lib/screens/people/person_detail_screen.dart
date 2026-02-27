@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../core/analytics.dart';
 import '../../core/constants.dart';
 import '../../core/utils.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/people_provider.dart';
+import '../../repositories/export_repository.dart';
 import '../../widgets/initials_avatar.dart';
 import '../../widgets/loading_spinner.dart';
 import '../../widgets/tag_chip.dart';
@@ -31,6 +35,15 @@ class PersonDetailScreen extends ConsumerWidget {
       appBar: AppBar(
         actions: [
           IconButton(
+            icon: const Icon(Icons.share_outlined),
+            onPressed: () {
+              Analytics.logSharePerson();
+              final repo = ExportRepository();
+              final summary = repo.generatePersonSummary(person);
+              Share.share(summary);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.card_giftcard, color: AppColors.pink),
             onPressed: () => context.push('/people/${person.id}/gifts'),
           ),
@@ -48,7 +61,12 @@ class PersonDetailScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(20),
         children: [
           // Header
-          Center(child: InitialsAvatar(name: person.name, size: 80)),
+          Center(
+            child: Hero(
+              tag: 'avatar-${person.id}',
+              child: InitialsAvatar(name: person.name, size: 80),
+            ),
+          ),
           const SizedBox(height: 12),
           Center(
             child: Text(
@@ -299,6 +317,8 @@ class PersonDetailScreen extends ConsumerWidget {
     );
 
     if (confirmed == true && context.mounted) {
+      HapticFeedback.lightImpact();
+      Analytics.logDeletePerson();
       final user = ref.read(authStateProvider).value;
       if (user != null) {
         await ref

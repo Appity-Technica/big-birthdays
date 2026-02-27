@@ -29,10 +29,13 @@ class PersonListTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      leading: InitialsAvatar(
-        name: person.name,
-        size: 44,
-        colorIndex: index,
+      leading: Hero(
+        tag: 'avatar-${person.id}',
+        child: InitialsAvatar(
+          name: person.name,
+          size: 44,
+          colorIndex: index,
+        ),
       ),
       title: Text(
         person.name,
