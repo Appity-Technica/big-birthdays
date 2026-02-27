@@ -7,9 +7,15 @@ export interface ImportContact {
  * Parse a CSV string into contacts with names and birthdays.
  * Handles flexible column headers and common date formats.
  */
+const MAX_ROWS = 10000;
+
 export function parseCSV(text: string): ImportContact[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim());
   if (lines.length < 2) return [];
+
+  if (lines.length > MAX_ROWS) {
+    throw new Error('File exceeds maximum of 10,000 rows');
+  }
 
   const headers = parseCSVRow(lines[0]).map((h) => h.toLowerCase().trim());
 

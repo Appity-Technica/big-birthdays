@@ -230,10 +230,16 @@ class GiftResultsScreen extends ConsumerWidget {
                             const Spacer(),
                             if (gift.purchaseUrl.isNotEmpty)
                               OutlinedButton.icon(
-                                onPressed: () => launchUrl(
-                                  Uri.parse(gift.purchaseUrl),
-                                  mode: LaunchMode.externalApplication,
-                                ),
+                                onPressed: () {
+                                  final uri = Uri.parse(gift.purchaseUrl);
+                                  if (uri.scheme == 'http' || uri.scheme == 'https') {
+                                    launchUrl(uri, mode: LaunchMode.externalApplication);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Invalid URL: only http and https links are supported.')),
+                                    );
+                                  }
+                                },
                                 icon: const Icon(Icons.open_in_new,
                                     size: 14),
                                 label: const Text('Buy'),

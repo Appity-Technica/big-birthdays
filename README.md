@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Big Birthdays (Tiaras & Trains)
 
-## Getting Started
+A cross-platform birthday tracking app with AI-powered gift suggestions.
 
-First, run the development server:
+## Tech Stack
+
+- **Mobile:** Flutter (iOS & Android)
+- **Web:** Next.js (TypeScript, Tailwind CSS, App Router)
+- **Backend:** Firebase (Auth, Firestore, Cloud Functions, FCM, Analytics, Crashlytics)
+- **AI:** Anthropic Claude API (gift suggestions)
+
+## Prerequisites
+
+- Flutter SDK
+- Node.js 20+
+- Firebase CLI (`npm install -g firebase-tools`)
+- Android Studio (for Android) / Xcode (for iOS)
+
+## Setup
+
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/Appity-Technica/big-birthdays.git
+   cd big-birthdays
+   ```
+
+2. **Firebase setup**
+   ```bash
+   firebase login
+   ```
+   The Firebase project is `big-birthdays`.
+
+3. **Flutter setup**
+   ```bash
+   cd flutter && flutter pub get
+   ```
+
+4. **Web setup**
+   ```bash
+   npm install
+   ```
+
+5. **Functions setup**
+   ```bash
+   cd functions && npm install
+   ```
+
+6. **Environment**
+   Copy `.env.example` to `.env.local` and fill in your Firebase config values.
+
+## Development
+
+- **Flutter:** `cd flutter && flutter run`
+- **Web:** `npm run dev`
+- **Functions:** `cd functions && npm run serve`
+
+## Testing
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd flutter && flutter test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+292 tests covering models, services, and UI.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Flutter:** Firebase App Distribution
+  ```bash
+  firebase appdistribution:distribute
+  ```
+- **Web:** Firebase App Hosting (auto-deploys from `main` branch)
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+flutter/       Flutter mobile app (iOS & Android)
+src/           Next.js web app
+functions/     Firebase Cloud Functions
+```

@@ -108,28 +108,31 @@ export default function EditPersonPage() {
   const [saving, setSaving] = useState(false);
   const [initialised, setInitialised] = useState(false);
 
-  // Populate form when person data loads
+  // Populate form when person data loads (one-time initialization from fetched data)
   useEffect(() => {
     if (person && !initialised) {
-      setName(person.name);
-      const dob = parseDob(person.dateOfBirth);
-      setDobDay(String(dob.day));
-      setDobMonth(String(dob.month));
-      setDobYear(dob.year !== null ? String(dob.year) : '');
-      setRelationship(person.relationship);
-      setConnectedThrough(person.connectedThrough || '');
-      setKnownFrom(person.knownFrom || '');
-      setKnownFromCustom(person.knownFromCustom || '');
-      setNotes(person.notes || '');
-      setInterests(person.interests?.join(', ') || '');
-      setGiftIdeas(person.giftIdeas?.join(', ') || '');
-      setParties(person.parties?.map(partyToForm) || []);
-      setPastGifts(person.pastGifts?.map(giftToForm) || []);
-      if (person.notificationTimings) {
-        setUseCustomNotifications(true);
-        setNotificationTimings(person.notificationTimings);
-      }
-      setInitialised(true);
+      // Batch form initialization in a microtask to avoid synchronous setState in effect
+      queueMicrotask(() => {
+        setName(person.name);
+        const dob = parseDob(person.dateOfBirth);
+        setDobDay(String(dob.day));
+        setDobMonth(String(dob.month));
+        setDobYear(dob.year !== null ? String(dob.year) : '');
+        setRelationship(person.relationship);
+        setConnectedThrough(person.connectedThrough || '');
+        setKnownFrom(person.knownFrom || '');
+        setKnownFromCustom(person.knownFromCustom || '');
+        setNotes(person.notes || '');
+        setInterests(person.interests?.join(', ') || '');
+        setGiftIdeas(person.giftIdeas?.join(', ') || '');
+        setParties(person.parties?.map(partyToForm) || []);
+        setPastGifts(person.pastGifts?.map(giftToForm) || []);
+        if (person.notificationTimings) {
+          setUseCustomNotifications(true);
+          setNotificationTimings(person.notificationTimings);
+        }
+        setInitialised(true);
+      });
     }
   }, [person, initialised]);
 

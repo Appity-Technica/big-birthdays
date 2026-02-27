@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { fetchGoogleContactsWithBirthdays } from '@/lib/contacts';
 import { parseFile } from '@/lib/csv';
@@ -50,11 +51,19 @@ export default function ImportContactsPage() {
     }
   }
 
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setError('');
+
+    if (file.size > MAX_FILE_SIZE) {
+      setError('File too large. Maximum file size is 5MB.');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       try {
@@ -293,11 +302,14 @@ export default function ImportContactsPage() {
                       </div>
 
                       {contact.photo ? (
-                        <img
+                        <Image
                           src={contact.photo}
                           alt=""
+                          width={40}
+                          height={40}
                           className="w-10 h-10 rounded-lg object-cover shrink-0"
                           referrerPolicy="no-referrer"
+                          unoptimized
                         />
                       ) : (
                         <div className="w-10 h-10 rounded-lg bg-pink text-white flex items-center justify-center text-sm font-display font-bold shrink-0">

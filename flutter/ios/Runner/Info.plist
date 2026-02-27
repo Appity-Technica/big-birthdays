@@ -39,6 +39,8 @@
 	</array>
 	<key>NSContactsUsageDescription</key>
 	<string>We use your contacts to import birthdays into the app.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to measure app performance and improve your experience.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

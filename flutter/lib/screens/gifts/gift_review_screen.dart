@@ -53,18 +53,29 @@ class _GiftReviewScreenState extends ConsumerState<GiftReviewScreen> {
     final dob = parseDob(person.dateOfBirth);
     final newDob = buildDob(birthYear, dob.month, dob.day);
 
-    await ref
-        .read(peopleRepositoryProvider)
-        .updatePerson(user.uid, person.id, {'dateOfBirth': newDob});
+    try {
+      await ref
+          .read(peopleRepositoryProvider)
+          .updatePerson(user.uid, person.id, {'dateOfBirth': newDob});
 
-    if (mounted) {
-      setState(() => _yearSaved = true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Birth year ($birthYear) saved to ${person.name}\'s profile'),
-          backgroundColor: AppColors.teal,
-        ),
-      );
+      if (mounted) {
+        setState(() => _yearSaved = true);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Birth year ($birthYear) saved to ${person.name}\'s profile'),
+            backgroundColor: AppColors.teal,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not save birth year. Please try again.'),
+            backgroundColor: AppColors.coral,
+          ),
+        );
+      }
     }
   }
 

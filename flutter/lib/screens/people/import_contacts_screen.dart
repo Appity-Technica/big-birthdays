@@ -65,14 +65,19 @@ class _ImportContactsScreenState extends ConsumerState<ImportContactsScreen> {
 
     final repo = ref.read(peopleRepositoryProvider);
     var count = 0;
+    var errorCount = 0;
     for (final idx in _selected) {
       final contact = _contacts[idx];
-      await repo.addPerson(user.uid, {
-        'name': contact.name,
-        'dateOfBirth': contact.dateOfBirth,
-        'relationship': Relationship.friend.firestoreValue,
-      });
-      count++;
+      try {
+        await repo.addPerson(user.uid, {
+          'name': contact.name,
+          'dateOfBirth': contact.dateOfBirth,
+          'relationship': Relationship.friend.firestoreValue,
+        });
+        count++;
+      } catch (e) {
+        errorCount++;
+      }
     }
 
     setState(() {
@@ -80,6 +85,15 @@ class _ImportContactsScreenState extends ConsumerState<ImportContactsScreen> {
       _step = 2;
       _loading = false;
     });
+
+    if (mounted && errorCount > 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Imported $count of ${_selected.length} ($errorCount failed)'),
+          backgroundColor: AppColors.orange,
+        ),
+      );
+    }
   }
 
   @override

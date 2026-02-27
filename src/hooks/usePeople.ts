@@ -24,9 +24,19 @@ export function usePeople() {
 
   useEffect(() => {
     if (!authLoading) {
-      refresh();
+      // Load initial data when auth state resolves
+      void (async () => {
+        setLoading(true);
+        if (user) {
+          const data = await firestore.getAllPeopleFirestore(user.uid);
+          setPeople(data);
+        } else {
+          setPeople(local.getAllPeople());
+        }
+        setLoading(false);
+      })();
     }
-  }, [authLoading, refresh]);
+  }, [authLoading, user]);
 
   async function addPerson(person: Omit<Person, 'id' | 'createdAt' | 'updatedAt'>) {
     if (user) {

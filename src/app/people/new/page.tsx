@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { usePeople } from '@/hooks/usePeople';
-import { Relationship, KnownFrom, PastGift } from '@/types';
+import { Relationship, KnownFrom } from '@/types';
 import { buildDob } from '@/lib/utils';
 
 const MONTHS = [

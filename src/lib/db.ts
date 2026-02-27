@@ -9,11 +9,9 @@ import {
   setDoc,
   query,
   orderBy,
-  serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { Person, NotificationSettings, UserPreferences } from '@/types';
-import { generateId } from './utils';
 
 function peopleCollection(userId: string) {
   return collection(db, 'users', userId, 'people');
@@ -110,7 +108,8 @@ export async function savePreferences(userId: string, prefs: UserPreferences): P
  */
 export async function migrateLocalToFirestore(userId: string, localPeople: Person[]): Promise<void> {
   for (const person of localPeople) {
-    const { id, ...data } = person;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _migrationId, ...data } = person;
     await addDoc(peopleCollection(userId), stripUndefined(data as Record<string, unknown>));
   }
 }

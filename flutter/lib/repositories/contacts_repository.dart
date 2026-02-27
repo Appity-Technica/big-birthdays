@@ -16,8 +16,8 @@ class ContactsRepository {
       return result.map((c) {
         final map = Map<String, dynamic>.from(c);
         return DeviceContact(
-          name: map['name'] as String,
-          dateOfBirth: map['dateOfBirth'] as String,
+          name: (map['name'] as String?) ?? '',
+          dateOfBirth: (map['dateOfBirth'] as String?) ?? '',
         );
       }).toList()
         ..sort((a, b) => a.name.compareTo(b.name));

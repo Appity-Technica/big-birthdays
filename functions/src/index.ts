@@ -236,6 +236,9 @@ function parseGiftResponse(text: string): GiftSuggestion[] {
   }
 }
 
+const RATE_LIMIT_MAX = 50;
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
 export const getGiftSuggestions = onCall(
   {
     region: 'europe-west2',
@@ -250,6 +253,27 @@ export const getGiftSuggestions = onCall(
     if (!data.name) {
       throw new HttpsError('invalid-argument', 'Person name is required');
     }
+
+    // --- Per-user rate limiting ---
+    const uid = request.auth.uid;
+    const rateLimitRef = db.collection('_rateLimits').doc(uid);
+    const now = Date.now();
+
+    const rateLimitSnap = await rateLimitRef.get();
+    let timestamps: number[] = rateLimitSnap.exists
+      ? (rateLimitSnap.data()?.timestamps as number[] ?? [])
+      : [];
+
+    // Filter to only timestamps within the last hour
+    timestamps = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+
+    if (timestamps.length >= RATE_LIMIT_MAX) {
+      throw new HttpsError('resource-exhausted', 'Rate limit exceeded. Please try again later.');
+    }
+
+    // Record this call
+    timestamps.push(now);
+    await rateLimitRef.set({ timestamps });
 
     try {
       const client = new Anthropic({ apiKey: anthropicKey.value() });
@@ -266,6 +290,11 @@ export const getGiftSuggestions = onCall(
 
       return { suggestions };
     } catch (err: unknown) {
+      // Handle Anthropic rate limit errors specifically
+      if (err instanceof Anthropic.RateLimitError) {
+        console.error('Anthropic rate limit hit:', err.message);
+        throw new HttpsError('unavailable', 'AI service is temporarily busy. Please try again in a few minutes.');
+      }
       console.error('Gift suggestion error:', err);
       const msg = err instanceof Error ? err.message : 'Unknown error';
       throw new HttpsError('internal', `Failed to get gift suggestions: ${msg}`);

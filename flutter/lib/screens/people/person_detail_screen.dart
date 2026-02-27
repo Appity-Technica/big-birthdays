@@ -246,8 +246,16 @@ class PersonDetailScreen extends ConsumerWidget {
                                 IconButton(
                                   icon: const Icon(Icons.open_in_new,
                                       size: 16),
-                                  onPressed: () =>
-                                      launchUrl(Uri.parse(g.url!)),
+                                  onPressed: () {
+                                    final uri = Uri.parse(g.url!);
+                                    if (uri.scheme == 'http' || uri.scheme == 'https') {
+                                      launchUrl(uri);
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Invalid URL: only http and https links are supported.')),
+                                      );
+                                    }
+                                  },
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
                                 ),

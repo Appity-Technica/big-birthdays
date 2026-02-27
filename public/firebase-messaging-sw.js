@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* global self, importScripts, firebase */
 importScripts('https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging-compat.js');
 
