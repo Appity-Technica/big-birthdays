@@ -1,4 +1,4 @@
-import { buildGiftPrompt, GiftRequest, COUNTRY_CONFIG } from '../src/utils';
+import { buildGiftPrompt, GiftRequest } from '../src/utils';
 
 function makeRequest(overrides: Partial<GiftRequest> = {}): GiftRequest {
   return {
@@ -77,20 +77,19 @@ describe('buildGiftPrompt', () => {
     it('uses AU config', () => {
       const prompt = buildGiftPrompt(makeRequest({ country: 'AU' }));
       expect(prompt).toContain('Australia');
-      expect(prompt).toContain(COUNTRY_CONFIG['AU'].retailers);
+      expect(prompt).toContain('A$');
     });
 
     it('uses GB config', () => {
       const prompt = buildGiftPrompt(makeRequest({ country: 'GB' }));
       expect(prompt).toContain('United Kingdom');
       expect(prompt).toContain('£');
-      expect(prompt).toContain(COUNTRY_CONFIG['GB'].retailers);
     });
 
     it('uses US config', () => {
       const prompt = buildGiftPrompt(makeRequest({ country: 'US' }));
       expect(prompt).toContain('United States');
-      expect(prompt).toContain(COUNTRY_CONFIG['US'].retailers);
+      expect(prompt).toContain('Country: United States');
     });
 
     it('falls back to AU for unknown country code', () => {

@@ -240,9 +240,9 @@ class GiftResultsScreen extends ConsumerWidget {
                                     );
                                   }
                                 },
-                                icon: const Icon(Icons.open_in_new,
+                                icon: const Icon(Icons.search,
                                     size: 14),
-                                label: const Text('Buy'),
+                                label: const Text('Search'),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: accent,
                                   side: BorderSide(

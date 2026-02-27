@@ -15,17 +15,18 @@ export interface CountryConfig {
   name: string;
   currency: string;
   retailers: string;
+  searchDomain: string;
 }
 
 export const COUNTRY_CONFIG: Record<string, CountryConfig> = {
-  'AU': { name: 'Australia', currency: 'A$', retailers: 'Amazon Australia, Kmart, Big W, The Iconic, Myer' },
-  'GB': { name: 'United Kingdom', currency: '£', retailers: 'Amazon UK, Etsy, Not On The High Street, John Lewis' },
-  'US': { name: 'United States', currency: '$', retailers: 'Amazon, Etsy, Target, Nordstrom' },
-  'CA': { name: 'Canada', currency: 'C$', retailers: 'Amazon Canada, Indigo, Canadian Tire, Hudson\'s Bay' },
-  'IE': { name: 'Ireland', currency: '€', retailers: 'Amazon, Etsy, Brown Thomas, Arnotts' },
-  'NZ': { name: 'New Zealand', currency: 'NZ$', retailers: 'Amazon, The Warehouse, Mighty Ape, Farmers' },
-  'ZA': { name: 'South Africa', currency: 'R', retailers: 'Takealot, Superbalist, Mr Price, Woolworths' },
-  'IN': { name: 'India', currency: '₹', retailers: 'Amazon India, Flipkart, Myntra, Nykaa' },
+  'AU': { name: 'Australia', currency: 'A$', retailers: 'Amazon Australia, Kmart, Big W, The Iconic, Myer', searchDomain: 'amazon.com.au' },
+  'GB': { name: 'United Kingdom', currency: '£', retailers: 'Amazon UK, Etsy, Not On The High Street, John Lewis', searchDomain: 'amazon.co.uk' },
+  'US': { name: 'United States', currency: '$', retailers: 'Amazon, Etsy, Target, Nordstrom', searchDomain: 'amazon.com' },
+  'CA': { name: 'Canada', currency: 'C$', retailers: 'Amazon Canada, Indigo, Canadian Tire, Hudson\'s Bay', searchDomain: 'amazon.ca' },
+  'IE': { name: 'Ireland', currency: '€', retailers: 'Amazon, Etsy, Brown Thomas, Arnotts', searchDomain: 'amazon.co.uk' },
+  'NZ': { name: 'New Zealand', currency: 'NZ$', retailers: 'Amazon, The Warehouse, Mighty Ape, Farmers', searchDomain: 'amazon.com.au' },
+  'ZA': { name: 'South Africa', currency: 'R', retailers: 'Takealot, Superbalist, Mr Price, Woolworths', searchDomain: 'amazon.com' },
+  'IN': { name: 'India', currency: '₹', retailers: 'Amazon India, Flipkart, Myntra, Nykaa', searchDomain: 'amazon.in' },
 };
 
 export interface GiftSuggestion {
@@ -76,10 +77,9 @@ export function buildGiftPrompt(data: GiftRequest): string {
   let prompt = `You are a gift recommendation expert. Based on the following information about a person, suggest exactly 3 thoughtful, purchasable gift ideas. Return ONLY a JSON array with no other text, no markdown fences, no explanation.
 
 Each gift object must have these exact fields:
-- "name": short product name
+- "name": short, specific product name (e.g. "Sony WH-1000XM5 Headphones" not just "Headphones")
 - "description": 2-3 sentence description of why this gift suits the person
 - "estimatedPrice": price range as a string (e.g. "${config.currency}20-${config.currency}30")
-- "purchaseUrl": a real, working URL where this can be purchased (use ${config.retailers}, or other major ${config.name} retailers)
 
 Person details:
 - Name: ${data.name}`;
@@ -106,26 +106,44 @@ Person details:
     prompt += `\n- Existing gift ideas to consider: ${data.giftIdeas.join(', ')}`;
   }
 
-  prompt += `\n\nIMPORTANT: Suggest gifts that are different from past gifts. If a past gift had a high rating, use it as a signal of what they like. Use prices in ${config.currency} and provide real product URLs from major ${config.name} retailers. Return ONLY valid JSON array - no markdown, no explanation.`;
+  prompt += `\n\nIMPORTANT: Suggest gifts that are different from past gifts. If a past gift had a high rating, use it as a signal of what they like. Use prices in ${config.currency}. Do NOT include a "purchaseUrl" field — we will generate search links automatically. Return ONLY valid JSON array - no markdown, no explanation.`;
 
   return prompt;
 }
 
-export function parseGiftResponse(text: string): GiftSuggestion[] {
+/** Build an Amazon search URL for a gift name in the user's country. */
+export function buildSearchUrl(giftName: string, countryCode: string): string {
+  const config = COUNTRY_CONFIG[countryCode] || COUNTRY_CONFIG['AU'];
+  const query = encodeURIComponent(giftName);
+  return `https://www.${config.searchDomain}/s?k=${query}`;
+}
+
+export function parseGiftResponse(text: string, countryCode?: string): GiftSuggestion[] {
+  let raw: Array<Record<string, unknown>>;
   // Try direct JSON parse first
   try {
-    return JSON.parse(text);
+    raw = JSON.parse(text);
   } catch {
     // Try extracting from markdown code fences
     const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (fenceMatch) {
-      return JSON.parse(fenceMatch[1].trim());
+      raw = JSON.parse(fenceMatch[1].trim());
+    } else {
+      // Try finding array brackets
+      const bracketMatch = text.match(/\[[\s\S]*\]/);
+      if (bracketMatch) {
+        raw = JSON.parse(bracketMatch[0]);
+      } else {
+        throw new Error('Could not parse gift suggestions from AI response');
+      }
     }
-    // Try finding array brackets
-    const bracketMatch = text.match(/\[[\s\S]*\]/);
-    if (bracketMatch) {
-      return JSON.parse(bracketMatch[0]);
-    }
-    throw new Error('Could not parse gift suggestions from AI response');
   }
+
+  // Inject reliable search URLs, replacing any AI-hallucinated purchaseUrl
+  return raw.map((item) => ({
+    name: String(item.name ?? ''),
+    description: String(item.description ?? ''),
+    estimatedPrice: String(item.estimatedPrice ?? ''),
+    purchaseUrl: buildSearchUrl(String(item.name ?? ''), countryCode || 'AU'),
+  }));
 }
