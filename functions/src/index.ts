@@ -5,6 +5,35 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { defineSecret } from 'firebase-functions/params';
 import Anthropic from '@anthropic-ai/sdk';
+import { z } from 'zod';
+import {
+  NotificationTiming,
+  GiftRequest,
+  TIMING_TO_DAYS,
+  daysUntilBirthday,
+  timingLabel,
+  buildGiftPrompt,
+  parseGiftResponse,
+} from './utils';
+
+// --- Zod schema for gift suggestion input validation ---
+
+const PastGiftSchema = z.object({
+  year: z.number().int().min(1900).max(2100),
+  description: z.string(),
+  rating: z.number().int().min(1).max(5).nullable(),
+});
+
+const GiftRequestSchema = z.object({
+  name: z.string().min(1, 'Person name is required').max(100, 'Name must be 100 characters or less'),
+  age: z.number().int().min(0).max(150).nullable(),
+  relationship: z.string().min(1, 'Relationship is required'),
+  interests: z.array(z.string()).max(20, 'Too many interests (max 20)'),
+  pastGifts: z.array(PastGiftSchema).max(50, 'Too many past gifts (max 50)'),
+  notes: z.string().max(1000, 'Notes must be 1000 characters or less').nullable(),
+  giftIdeas: z.array(z.string()).max(20, 'Too many gift ideas (max 20)'),
+  country: z.string().length(2).toUpperCase().optional(),
+});
 
 const anthropicKey = defineSecret('ANTHROPIC_API_KEY');
 
@@ -12,8 +41,6 @@ initializeApp();
 
 const db = getFirestore();
 const messaging = getMessaging();
-
-type NotificationTiming = 'on-the-day' | '1-day' | '3-days' | '1-week' | '2-weeks';
 
 interface NotificationSettings {
   enabled: boolean;
@@ -25,40 +52,6 @@ interface Person {
   name: string;
   dateOfBirth: string;
   notificationTimings?: NotificationTiming[];
-}
-
-const TIMING_TO_DAYS: Record<NotificationTiming, number> = {
-  'on-the-day': 0,
-  '1-day': 1,
-  '3-days': 3,
-  '1-week': 7,
-  '2-weeks': 14,
-};
-
-function daysUntilBirthday(dateOfBirth: string): number {
-  const today = new Date();
-  const [, monthStr, dayStr] = dateOfBirth.split('-');
-  const month = parseInt(monthStr, 10) - 1;
-  const day = parseInt(dayStr, 10);
-
-  const thisYear = today.getFullYear();
-  let next = new Date(thisYear, month, day);
-  if (next < today) {
-    next = new Date(thisYear + 1, month, day);
-  }
-
-  const diffMs = next.getTime() - today.getTime();
-  return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-}
-
-function timingLabel(timing: NotificationTiming): string {
-  switch (timing) {
-    case 'on-the-day': return 'today';
-    case '1-day': return 'tomorrow';
-    case '3-days': return 'in 3 days';
-    case '1-week': return 'in 1 week';
-    case '2-weeks': return 'in 2 weeks';
-  }
 }
 
 const USER_BATCH_SIZE = 100;
@@ -186,102 +179,6 @@ export const sendBirthdayNotifications = onSchedule(
 
 // --- AI Gift Suggestions ---
 
-interface GiftRequest {
-  name: string;
-  age: number | null;
-  relationship: string;
-  interests: string[];
-  pastGifts: { year: number; description: string; rating: number | null }[];
-  notes: string | null;
-  giftIdeas: string[];
-  country?: string;
-}
-
-interface CountryConfig {
-  name: string;
-  currency: string;
-  retailers: string;
-}
-
-const COUNTRY_CONFIG: Record<string, CountryConfig> = {
-  'AU': { name: 'Australia', currency: 'A$', retailers: 'Amazon Australia, Kmart, Big W, The Iconic, Myer' },
-  'GB': { name: 'United Kingdom', currency: '£', retailers: 'Amazon UK, Etsy, Not On The High Street, John Lewis' },
-  'US': { name: 'United States', currency: '$', retailers: 'Amazon, Etsy, Target, Nordstrom' },
-  'CA': { name: 'Canada', currency: 'C$', retailers: 'Amazon Canada, Indigo, Canadian Tire, Hudson\'s Bay' },
-  'IE': { name: 'Ireland', currency: '€', retailers: 'Amazon, Etsy, Brown Thomas, Arnotts' },
-  'NZ': { name: 'New Zealand', currency: 'NZ$', retailers: 'Amazon, The Warehouse, Mighty Ape, Farmers' },
-  'ZA': { name: 'South Africa', currency: 'R', retailers: 'Takealot, Superbalist, Mr Price, Woolworths' },
-  'IN': { name: 'India', currency: '₹', retailers: 'Amazon India, Flipkart, Myntra, Nykaa' },
-};
-
-interface GiftSuggestion {
-  name: string;
-  description: string;
-  estimatedPrice: string;
-  purchaseUrl: string;
-}
-
-function buildGiftPrompt(data: GiftRequest): string {
-  const countryCode = data.country || 'AU';
-  const config = COUNTRY_CONFIG[countryCode] || COUNTRY_CONFIG['AU'];
-
-  let prompt = `You are a gift recommendation expert. Based on the following information about a person, suggest exactly 3 thoughtful, purchasable gift ideas. Return ONLY a JSON array with no other text, no markdown fences, no explanation.
-
-Each gift object must have these exact fields:
-- "name": short product name
-- "description": 2-3 sentence description of why this gift suits the person
-- "estimatedPrice": price range as a string (e.g. "${config.currency}20-${config.currency}30")
-- "purchaseUrl": a real, working URL where this can be purchased (use ${config.retailers}, or other major ${config.name} retailers)
-
-Person details:
-- Name: ${data.name}`;
-
-  if (data.age !== null) prompt += `\n- Age: ${data.age}`;
-  prompt += `\n- Relationship: ${data.relationship}`;
-  prompt += `\n- Country: ${config.name}`;
-
-  if (data.interests.length > 0) {
-    prompt += `\n- Interests: ${data.interests.join(', ')}`;
-  }
-
-  if (data.pastGifts.length > 0) {
-    prompt += `\n- Past gifts:`;
-    for (const g of data.pastGifts) {
-      prompt += `\n  - ${g.year}: ${g.description}`;
-      if (g.rating !== null) prompt += ` (rated ${g.rating}/5)`;
-    }
-  }
-
-  if (data.notes) prompt += `\n- Notes/preferences: ${data.notes}`;
-
-  if (data.giftIdeas.length > 0) {
-    prompt += `\n- Existing gift ideas to consider: ${data.giftIdeas.join(', ')}`;
-  }
-
-  prompt += `\n\nIMPORTANT: Suggest gifts that are different from past gifts. If a past gift had a high rating, use it as a signal of what they like. Use prices in ${config.currency} and provide real product URLs from major ${config.name} retailers. Return ONLY valid JSON array - no markdown, no explanation.`;
-
-  return prompt;
-}
-
-function parseGiftResponse(text: string): GiftSuggestion[] {
-  // Try direct JSON parse first
-  try {
-    return JSON.parse(text);
-  } catch {
-    // Try extracting from markdown code fences
-    const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (fenceMatch) {
-      return JSON.parse(fenceMatch[1].trim());
-    }
-    // Try finding array brackets
-    const bracketMatch = text.match(/\[[\s\S]*\]/);
-    if (bracketMatch) {
-      return JSON.parse(bracketMatch[0]);
-    }
-    throw new Error('Could not parse gift suggestions from AI response');
-  }
-}
-
 const RATE_LIMIT_MAX = 50;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
@@ -295,10 +192,14 @@ export const getGiftSuggestions = onCall(
       throw new HttpsError('unauthenticated', 'Must be signed in');
     }
 
-    const data = request.data as GiftRequest;
-    if (!data.name) {
-      throw new HttpsError('invalid-argument', 'Person name is required');
+    const parseResult = GiftRequestSchema.safeParse(request.data);
+    if (!parseResult.success) {
+      const errors = parseResult.error.issues
+        .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
+        .join('; ');
+      throw new HttpsError('invalid-argument', `Invalid request: ${errors}`);
     }
+    const data: GiftRequest = parseResult.data;
 
     // --- Per-user rate limiting ---
     const uid = request.auth.uid;

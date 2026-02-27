@@ -4,6 +4,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
+    "test": "jest",
     "serve": "npm run build && firebase emulators:start --only functions",
     "deploy": "firebase deploy --only functions"
   },
@@ -16,6 +17,9 @@
     "firebase-functions": "^6.3.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.7.0"
   }
 }
