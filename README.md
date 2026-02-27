@@ -60,7 +60,7 @@ A cross-platform birthday tracking app with AI-powered gift suggestions.
 cd flutter && flutter test
 ```
 
-292 tests covering models, services, and UI.
+343 tests covering models, repositories, providers, and UI widgets.
 
 ## Deployment
 

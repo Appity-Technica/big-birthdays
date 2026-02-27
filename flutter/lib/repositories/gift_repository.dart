@@ -3,10 +3,22 @@ import '../models/gift_suggestion.dart';
 import '../models/person.dart';
 import '../core/utils.dart';
 
+/// Repository for AI-powered gift suggestions via Firebase Cloud Functions.
+///
+/// Calls the `getGiftSuggestions` Cloud Function (europe-west2) which uses
+/// the Anthropic Claude API to generate personalised gift ideas.
 class GiftRepository {
   final FirebaseFunctions _functions =
       FirebaseFunctions.instanceFor(region: 'europe-west2');
 
+  /// Fetches AI-generated gift suggestions for a [person].
+  ///
+  /// Sends the person's name, age, relationship, interests, past gifts,
+  /// notes, and existing gift ideas to the Cloud Function for context.
+  ///
+  /// The [country] parameter (ISO 3166-1 alpha-2 code, e.g. `'AU'`, `'GB'`,
+  /// `'US'`) localises suggestions with region-appropriate retailers and
+  /// currency. Defaults to `'AU'`.
   Future<List<GiftSuggestion>> getGiftSuggestions(Person person, {String country = 'AU'}) async {
     final age = getCurrentAge(person.dateOfBirth);
 

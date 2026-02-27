@@ -1,23 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'enums.dart';
 
+/// A link to one of a person's social media profiles.
 class SocialLink {
+  /// The platform name (e.g. "instagram", "facebook").
   final String platform;
+
+  /// The full URL to the profile.
   final String url;
   const SocialLink({required this.platform, required this.url});
 
+  /// Creates a [SocialLink] from a Firestore map.
   factory SocialLink.fromMap(Map<String, dynamic> map) => SocialLink(
         platform: map['platform'] as String? ?? '',
         url: map['url'] as String? ?? '',
       );
 
+  /// Converts this link to a Firestore-compatible map.
   Map<String, dynamic> toMap() => {'platform': platform, 'url': url};
 }
 
+/// A gift that was given to a person in a previous year.
 class PastGift {
+  /// The year the gift was given.
   final int year;
+
+  /// A description of the gift.
   final String description;
+
+  /// Optional URL (e.g. a product link).
   final String? url;
+
+  /// Optional rating from 1 (poor) to 5 (loved it).
   final int? rating; // 1-5
 
   const PastGift({
@@ -27,6 +41,7 @@ class PastGift {
     this.rating,
   });
 
+  /// Creates a [PastGift] from a Firestore map.
   factory PastGift.fromMap(Map<String, dynamic> map) => PastGift(
         year: (map['year'] as num?)?.toInt() ?? 0,
         description: map['description'] as String? ?? '',
@@ -34,6 +49,7 @@ class PastGift {
         rating: (map['rating'] as num?)?.toInt(),
       );
 
+  /// Converts to a Firestore-compatible map, omitting empty optional fields.
   Map<String, dynamic> toMap() {
     final m = <String, dynamic>{
       'year': year,
@@ -45,10 +61,18 @@ class PastGift {
   }
 }
 
+/// A birthday party record for a given year.
 class Party {
+  /// The year the party took place or is planned.
   final int year;
+
+  /// Optional date string for the party.
   final String? date;
+
+  /// Optional list of invited guest names.
   final List<String>? invitedNames;
+
+  /// Optional notes about the party.
   final String? notes;
 
   const Party({
@@ -58,6 +82,7 @@ class Party {
     this.notes,
   });
 
+  /// Creates a [Party] from a Firestore map.
   factory Party.fromMap(Map<String, dynamic> map) => Party(
         year: (map['year'] as num?)?.toInt() ?? 0,
         date: map['date'] as String?,
@@ -67,6 +92,7 @@ class Party {
         notes: map['notes'] as String?,
       );
 
+  /// Converts to a Firestore-compatible map, omitting empty optional fields.
   Map<String, dynamic> toMap() {
     final m = <String, dynamic>{'year': year};
     if (date != null && date!.isNotEmpty) m['date'] = date;
@@ -78,23 +104,61 @@ class Party {
   }
 }
 
+/// A person whose birthday is being tracked.
+///
+/// Stored in Firestore under `users/{userId}/people/{personId}`.
+/// The [dateOfBirth] is in `YYYY-MM-DD` format, where a year of `0000`
+/// indicates the birth year is unknown.
 class Person {
+  /// Firestore document ID.
   final String id;
+
+  /// The person's display name.
   final String name;
+
+  /// Date of birth in `YYYY-MM-DD` format. Year `0000` means unknown.
   final String dateOfBirth;
+
+  /// Optional base64-encoded photo or URL.
   final String? photo;
+
+  /// How this person is related to the user.
   final Relationship relationship;
+
+  /// Optional name of someone the user knows this person through.
   final String? connectedThrough;
+
+  /// How the user originally met this person.
   final KnownFrom? knownFrom;
+
+  /// Custom description when [knownFrom] is [KnownFrom.other].
   final String? knownFromCustom;
+
+  /// Free-text notes about this person.
   final String? notes;
+
+  /// User-entered gift ideas for future reference.
   final List<String>? giftIdeas;
+
+  /// The person's interests/hobbies, used for AI gift suggestions.
   final List<String>? interests;
+
+  /// History of gifts given to this person.
   final List<PastGift>? pastGifts;
+
+  /// Party records for this person.
   final List<Party>? parties;
+
+  /// Links to the person's social media profiles.
   final List<SocialLink>? socialLinks;
+
+  /// When to send birthday reminder notifications.
   final List<NotificationTiming>? notificationTimings;
+
+  /// ISO 8601 timestamp when this record was created.
   final String createdAt;
+
+  /// ISO 8601 timestamp when this record was last updated.
   final String updatedAt;
 
   const Person({
@@ -117,6 +181,10 @@ class Person {
     required this.updatedAt,
   });
 
+  /// Creates a [Person] from a Firestore document snapshot.
+  ///
+  /// Defaults [dateOfBirth] to `'0000-01-01'` and [relationship] to
+  /// [Relationship.other] when the corresponding fields are missing.
   factory Person.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return Person(
@@ -152,6 +220,9 @@ class Person {
     );
   }
 
+  /// Converts this person to a Firestore-compatible map.
+  ///
+  /// Only includes optional fields when they are non-null and non-empty.
   Map<String, dynamic> toFirestore() {
     final map = <String, dynamic>{
       'name': name,
@@ -191,6 +262,7 @@ class Person {
     return map;
   }
 
+  /// Returns a copy of this person with the given fields replaced.
   Person copyWith({
     String? name,
     String? dateOfBirth,

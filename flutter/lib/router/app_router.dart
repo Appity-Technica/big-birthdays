@@ -19,6 +19,24 @@ import '../widgets/loading_spinner.dart';
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
+/// Provides the application's [GoRouter] configuration.
+///
+/// Routes:
+/// - `/startup` -- loading screen shown while auth state resolves
+/// - `/login` -- unauthenticated login screen
+/// - `/` -- dashboard (today's birthdays and upcoming)
+/// - `/people` -- people list
+/// - `/people/new` -- add a new person
+/// - `/people/import` -- import contacts from the device
+/// - `/people/:id` -- person detail
+/// - `/people/:id/edit` -- edit person
+/// - `/people/:id/gifts` -- review info before AI gift suggestions
+/// - `/people/:id/gifts/results` -- AI gift suggestion results
+/// - `/calendar` -- calendar view of all birthdays
+/// - `/settings` -- app settings
+///
+/// Redirects unauthenticated users to `/login` and authenticated users
+/// away from `/login`.
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
 
