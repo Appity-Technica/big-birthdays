@@ -233,7 +233,7 @@ export const getGiftSuggestions = onCall(
       });
 
       const text = message.content[0].type === 'text' ? message.content[0].text : '';
-      const suggestions = parseGiftResponse(text, data.country || 'AU');
+      const suggestions = parseGiftResponse(text);
 
       return { suggestions };
     } catch (err: unknown) {

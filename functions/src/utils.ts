@@ -15,18 +15,17 @@ export interface CountryConfig {
   name: string;
   currency: string;
   retailers: string;
-  searchDomain: string;
 }
 
 export const COUNTRY_CONFIG: Record<string, CountryConfig> = {
-  'AU': { name: 'Australia', currency: 'A$', retailers: 'Amazon Australia, Kmart, Big W, The Iconic, Myer', searchDomain: 'amazon.com.au' },
-  'GB': { name: 'United Kingdom', currency: '£', retailers: 'Amazon UK, Etsy, Not On The High Street, John Lewis', searchDomain: 'amazon.co.uk' },
-  'US': { name: 'United States', currency: '$', retailers: 'Amazon, Etsy, Target, Nordstrom', searchDomain: 'amazon.com' },
-  'CA': { name: 'Canada', currency: 'C$', retailers: 'Amazon Canada, Indigo, Canadian Tire, Hudson\'s Bay', searchDomain: 'amazon.ca' },
-  'IE': { name: 'Ireland', currency: '€', retailers: 'Amazon, Etsy, Brown Thomas, Arnotts', searchDomain: 'amazon.co.uk' },
-  'NZ': { name: 'New Zealand', currency: 'NZ$', retailers: 'Amazon, The Warehouse, Mighty Ape, Farmers', searchDomain: 'amazon.com.au' },
-  'ZA': { name: 'South Africa', currency: 'R', retailers: 'Takealot, Superbalist, Mr Price, Woolworths', searchDomain: 'amazon.com' },
-  'IN': { name: 'India', currency: '₹', retailers: 'Amazon India, Flipkart, Myntra, Nykaa', searchDomain: 'amazon.in' },
+  'AU': { name: 'Australia', currency: 'A$', retailers: 'Amazon Australia, Kmart, Big W, The Iconic, Myer' },
+  'GB': { name: 'United Kingdom', currency: '£', retailers: 'Amazon UK, Etsy, Not On The High Street, John Lewis' },
+  'US': { name: 'United States', currency: '$', retailers: 'Amazon, Etsy, Target, Nordstrom' },
+  'CA': { name: 'Canada', currency: 'C$', retailers: 'Amazon Canada, Indigo, Canadian Tire, Hudson\'s Bay' },
+  'IE': { name: 'Ireland', currency: '€', retailers: 'Amazon, Etsy, Brown Thomas, Arnotts' },
+  'NZ': { name: 'New Zealand', currency: 'NZ$', retailers: 'Amazon, The Warehouse, Mighty Ape, Farmers' },
+  'ZA': { name: 'South Africa', currency: 'R', retailers: 'Takealot, Superbalist, Mr Price, Woolworths' },
+  'IN': { name: 'India', currency: '₹', retailers: 'Amazon India, Flipkart, Myntra, Nykaa' },
 };
 
 export interface GiftSuggestion {
@@ -111,14 +110,13 @@ Person details:
   return prompt;
 }
 
-/** Build an Amazon search URL for a gift name in the user's country. */
-export function buildSearchUrl(giftName: string, countryCode: string): string {
-  const config = COUNTRY_CONFIG[countryCode] || COUNTRY_CONFIG['AU'];
+/** Build a Google search URL for a gift name. */
+export function buildSearchUrl(giftName: string): string {
   const query = encodeURIComponent(giftName);
-  return `https://www.${config.searchDomain}/s?k=${query}`;
+  return `https://www.google.com/search?q=${query}`;
 }
 
-export function parseGiftResponse(text: string, countryCode?: string): GiftSuggestion[] {
+export function parseGiftResponse(text: string): GiftSuggestion[] {
   let raw: Array<Record<string, unknown>>;
   // Try direct JSON parse first
   try {
@@ -144,6 +142,6 @@ export function parseGiftResponse(text: string, countryCode?: string): GiftSugge
     name: String(item.name ?? ''),
     description: String(item.description ?? ''),
     estimatedPrice: String(item.estimatedPrice ?? ''),
-    purchaseUrl: buildSearchUrl(String(item.name ?? ''), countryCode || 'AU'),
+    purchaseUrl: buildSearchUrl(String(item.name ?? '')),
   }));
 }
