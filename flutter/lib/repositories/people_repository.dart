@@ -43,4 +43,37 @@ class PeopleRepository {
   Future<void> deletePerson(String userId, String personId) async {
     await _peopleRef(userId).doc(personId).delete();
   }
+
+  /// Import multiple people in a Firestore batch write.
+  /// Creates new batches every 500 operations (Firestore limit).
+  Future<int> batchAddPeople(
+      String userId, List<Map<String, dynamic>> dataList) async {
+    final now = DateTime.now().toIso8601String();
+    final ref = _peopleRef(userId);
+    var batch = _db.batch();
+    var count = 0;
+
+    for (final data in dataList) {
+      final cleanData = <String, dynamic>{
+        ...data,
+        'createdAt': now,
+        'updatedAt': now,
+      }..removeWhere((_, v) => v == null);
+
+      final docRef = ref.doc();
+      batch.set(docRef, cleanData);
+      count++;
+
+      if (count % 500 == 0) {
+        await batch.commit();
+        batch = _db.batch();
+      }
+    }
+
+    if (count % 500 != 0) {
+      await batch.commit();
+    }
+
+    return count;
+  }
 }

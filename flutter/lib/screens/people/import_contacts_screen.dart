@@ -64,19 +64,27 @@ class _ImportContactsScreenState extends ConsumerState<ImportContactsScreen> {
     if (user == null) return;
 
     final repo = ref.read(peopleRepositoryProvider);
-    var count = 0;
-    var errorCount = 0;
+    final dataList = <Map<String, dynamic>>[];
     for (final idx in _selected) {
       final contact = _contacts[idx];
-      try {
-        await repo.addPerson(user.uid, {
-          'name': contact.name,
-          'dateOfBirth': contact.dateOfBirth,
-          'relationship': Relationship.friend.firestoreValue,
-        });
-        count++;
-      } catch (e) {
-        errorCount++;
+      dataList.add({
+        'name': contact.name,
+        'dateOfBirth': contact.dateOfBirth,
+        'relationship': Relationship.friend.firestoreValue,
+      });
+    }
+
+    var count = 0;
+    try {
+      count = await repo.batchAddPeople(user.uid, dataList);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Import failed: $e'),
+            backgroundColor: AppColors.orange,
+          ),
+        );
       }
     }
 
@@ -85,15 +93,6 @@ class _ImportContactsScreenState extends ConsumerState<ImportContactsScreen> {
       _step = 2;
       _loading = false;
     });
-
-    if (mounted && errorCount > 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Imported $count of ${_selected.length} ($errorCount failed)'),
-          backgroundColor: AppColors.orange,
-        ),
-      );
-    }
   }
 
   @override

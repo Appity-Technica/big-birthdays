@@ -28,11 +28,11 @@ final upcomingBirthdaysProvider = Provider<List<Person>>((ref) {
   return upcoming;
 });
 
-final personByIdProvider = Provider.family<Person?, String>((ref, id) {
+final peopleMapProvider = Provider<Map<String, Person>>((ref) {
   final people = ref.watch(peopleStreamProvider).value ?? [];
-  try {
-    return people.firstWhere((p) => p.id == id);
-  } catch (_) {
-    return null;
-  }
+  return {for (final p in people) p.id: p};
+});
+
+final personByIdProvider = Provider.family<Person?, String>((ref, id) {
+  return ref.watch(peopleMapProvider)[id];
 });
