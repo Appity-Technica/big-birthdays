@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "839942305953-1hupvkq9dvpqtpf1u7s21rnpt75bgt3r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.appitytechnica.bigbirthdays",
+            "certificate_hash": "17af02479855feb15eedfb3d4903144263f1670a"
+          }
+        },
+        {
           "client_id": "839942305953-oe31tcq4mrunju3p2ba9lvit5n2n9fdb.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "839942305953-oe31tcq4mrunju3p2ba9lvit5n2n9fdb.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "839942305953-gs6a79ntqmjr382805asbhi65b3t2qor.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.appitytechnica.bigbirthdays"
+              }
             }
           ]
         }
